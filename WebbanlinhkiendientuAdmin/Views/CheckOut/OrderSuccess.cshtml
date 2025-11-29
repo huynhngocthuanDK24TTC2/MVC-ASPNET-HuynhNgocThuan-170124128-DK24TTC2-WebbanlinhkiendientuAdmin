@@ -1,0 +1,40 @@
+﻿@{
+    ViewBag.Title = "Đặt hàng thành công";
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div style="text-align: center; padding: 80px 0;">
+
+                <!-- Icon thành công màu xanh -->
+                <i class="fa fa-check-circle" style="font-size: 80px; color: #5cb85c; margin-bottom: 20px;"></i>
+
+                <h2 style="font-weight: bold; color: #333; text-transform: uppercase;">Đặt hàng thành công!</h2>
+
+                <!-- Hiển thị thông báo Mã đơn hàng từ Controller -->
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success" style="display: inline-block; margin-top: 20px; font-size: 16px;">
+                        @TempData["Success"]
+                    </div>
+                }
+
+                <p style="font-size: 16px; color: #666; margin-top: 10px;">
+                    Cảm ơn bạn đã mua sắm tại <strong>ShopHNT</strong>.<br />
+                    Nhân viên của chúng tôi sẽ liên hệ để xác nhận đơn hàng trong thời gian sớm nhất.
+                </p>
+
+                <!-- Nút quay về trang chủ -->
+                <div style="margin-top: 40px;">
+                    <a href="@Url.Action("Index", "Home")" class="aa-browse-btn"
+                       style="background-color: #d31e1e; color: #fff; padding: 12px 30px; text-decoration: none; font-weight: bold; border-radius: 4px;">
+                        <i class="fa fa-shopping-cart"></i> TIẾP TỤC MUA SẮM
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

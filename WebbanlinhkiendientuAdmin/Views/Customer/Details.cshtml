@@ -1,0 +1,184 @@
+﻿@model WebbanlinhkiendientuAdmin.Models.Customer
+
+@{
+    ViewBag.Title = "Chi tiết khách hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- TIÊU ĐỀ TRANG -->
+<div class="row">
+    <div class="col-lg-12">
+        <h3 class="page-header" style="color: #5bc0de; border-bottom: 2px solid #ddd; margin-top: 20px;">
+            <i class="fa fa-info-circle"></i> Hồ Sơ Khách Hàng
+        </h3>
+    </div>
+</div>
+
+<div class="row">
+    <!-- CỘT TRÁI: ẢNH ĐẠI DIỆN & TRẠNG THÁI -->
+    <div class="col-md-4 col-sm-12">
+        <div class="panel panel-default text-center" style="box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <div class="panel-body" style="padding: 30px;">
+                <!-- Ảnh đại diện -->
+                <img src="@Url.Content(string.IsNullOrEmpty(Model.PicturePath) ? "~/Images/UserAvatar/no-image.jpg" : Model.PicturePath)"
+                     alt="Avatar"
+                     class="img-circle img-thumbnail"
+                     style="width: 180px; height: 180px; object-fit: cover; margin-bottom: 20px;" />
+
+                <!-- Tên khách hàng -->
+                <h3 class="text-primary" style="margin-top: 0; font-weight: bold;">@Model.First_Name @Model.Last_Name</h3>
+
+                <!-- Tên đăng nhập -->
+                <p class="text-muted"><i class="fa fa-user"></i> @Model.UserName</p>
+
+                <hr />
+
+                <!-- Trạng thái (3) -->
+                <p>
+                    <strong>Trạng thái: </strong>
+                    @if (Model.status == true)
+                    {
+                        <span class="label label-success" style="font-size: 100%;">Đang hoạt động</span>
+                    }
+                    else
+                    {
+                        <span class="label label-default" style="font-size: 100%;">Đã khóa</span>
+                    }
+                </p>
+
+                <!-- Ngày tạo -->
+                <p class="small text-muted">
+                    Tham gia ngày: @(Model.Created.HasValue ? Model.Created.Value.ToString("dd/MM/yyyy") : "N/A")
+                </p>
+            </div>
+        </div>
+
+        <!-- Các nút hành động -->
+        <div class="text-center" style="margin-bottom: 20px;">
+            <a href="@Url.Action("Edit", "Customer", new { id = Model.CustomerID })" class="btn btn-warning btn-lg btn-block">
+                <i class="fa fa-pencil"></i> Chỉnh sửa thông tin
+            </a>
+            <br />
+            <a href="@Url.Action("Index", "Customer")" class="btn btn-default btn-block">
+                <i class="fa fa-arrow-left"></i> Quay lại danh sách
+            </a>
+        </div>
+    </div>
+
+    <!-- CỘT PHẢI: THÔNG TIN CHI TIẾT -->
+    <div class="col-md-8 col-sm-12">
+        <div class="panel panel-info" style="box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-list-alt"></i> Thông tin cá nhân</h3>
+            </div>
+            <div class="panel-body">
+                <div class="form-horizontal">
+
+                    <!-- Hàng 1: Email & SĐT -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group" style="margin-bottom: 5px;">
+                                <label class="control-label col-md-12" style="text-align: left; color: #888;">Email:</label>
+                                <div class="col-md-12">
+                                    <p class="form-control-static" style="font-weight: bold; font-size: 16px;">
+                                        @Model.Email
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group" style="margin-bottom: 5px;">
+                                <label class="control-label col-md-12" style="text-align: left; color: #888;">Điện thoại:</label>
+                                <div class="col-md-12">
+                                    <p class="form-control-static" style="font-weight: bold; font-size: 16px;">
+                                        @Model.Phone
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr style="margin: 10px 0;" />
+
+                    <!-- Hàng 2: Giới tính & Ngày sinh -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group" style="margin-bottom: 5px;">
+                                <label class="control-label col-md-12" style="text-align: left; color: #888;">Giới tính:</label>
+                                <div class="col-md-12">
+                                    <p class="form-control-static">
+                                        @if (Model.Gender == "Male" || Model.Gender == "Nam")
+                                        {<span>Nam <i class="fa fa-mars text-info"></i></span> }
+                                        else if (Model.Gender == "Female" || Model.Gender == "Nữ")
+                                        { <span>Nữ <i class="fa fa-venus text-danger"></i></span> }
+                                        else
+                                        { <span>@Model.Gender</span>}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group" style="margin-bottom: 5px;">
+                                <label class="control-label col-md-12" style="text-align: left; color: #888;">Ngày sinh:</label>
+                                <div class="col-md-12">
+                                    <p class="form-control-static">
+                                        @(Model.DateofBirth.HasValue ? Model.DateofBirth.Value.ToString("dd/MM/yyyy") : "Chưa cập nhật")
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr style="margin: 10px 0;" />
+
+                    <!-- Hàng 3: Quốc gia & Thành phố -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group" style="margin-bottom: 5px;">
+                                <label class="control-label col-md-12" style="text-align: left; color: #888;">Quốc gia:</label>
+                                <div class="col-md-12">
+                                    <p class="form-control-static">@Model.Country</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group" style="margin-bottom: 5px;">
+                                <label class="control-label col-md-12" style="text-align: left; color: #888;">Thành phố:</label>
+                                <div class="col-md-12">
+                                    <p class="form-control-static">@Model.City</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr style="margin: 10px 0;" />
+
+                    <!-- Hàng 4: Địa chỉ (Full) -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group" style="margin-bottom: 5px;">
+                                <label class="control-label col-md-12" style="text-align: left; color: #888;">Địa chỉ chi tiết:</label>
+                                <div class="col-md-12">
+                                    <p class="form-control-static">@Model.Address</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr style="margin: 10px 0;" />
+
+                    <!-- Hàng 5: Ghi chú -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group" style="margin-bottom: 5px;">
+                                <label class="control-label col-md-12" style="text-align: left; color: #888;">Ghi chú:</label>
+                                <div class="col-md-12">
+                                    <div class="well well-sm">
+                                        @(string.IsNullOrEmpty(Model.Notes) ? "Không có ghi chú nào." : Model.Notes)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

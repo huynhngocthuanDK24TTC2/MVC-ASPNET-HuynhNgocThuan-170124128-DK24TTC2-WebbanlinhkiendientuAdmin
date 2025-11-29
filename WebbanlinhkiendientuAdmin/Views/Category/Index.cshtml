@@ -1,0 +1,114 @@
+﻿
+@model IEnumerable<WebbanlinhkiendientuAdmin.Models.Category>
+
+@{
+    ViewBag.Title = "Quản lý danh mục";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h2 class="page-header text-info">
+            <i class="fa fa-list"></i> Danh sách danh mục sản phẩm
+        </h2>
+    </div>
+</div>
+
+<!-- Hiển thị thông báo từ Controller (nếu có) -->
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <i class="fa fa-check-circle"></i> @TempData["Success"]
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <i class="fa fa-exclamation-triangle"></i> @TempData["Error"]
+    </div>
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h3 class="panel-title" style="line-height: 34px;">
+                            <i class="fa fa-table"></i> Dữ liệu danh mục
+                        </h3>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <a href="@Url.Action("Create", "Category")" class="btn btn-success">
+                            <i class="fa fa-plus"></i> Thêm mới
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;" class="text-center">ID</th>
+                                <th>Tên danh mục</th>
+                                <th class="text-center">Trạng thái</th>
+                                <th style="width: 150px;" class="text-center">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Any())
+                            {
+                                foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td class="text-center">@item.CategoryID</td>
+                                        <td class="font-bold text-primary">
+                                            @item.Name
+                                            <!-- Đếm số lượng danh mục con nếu muốn (cần Include trong Controller) -->
+                                            @if (item.SubCategories != null && item.SubCategories.Any())
+                                            {
+                                                <span class="badge pull-right">@item.SubCategories.Count sub</span>
+                                            }
+                                        </td>
+                                        <td class="text-center">
+                                            @if (item.isActive == true)
+                                            {
+                                                <span class="label label-success">Hiển thị</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="label label-default">Đang ẩn</span>
+                                            }
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="@Url.Action("Edit", "Category", new { id = item.CategoryID })" class="btn btn-warning btn-xs" title="Sửa">
+                                                <i class="fa fa-pencil"></i>
+                                            </a>
+
+                                            <!-- Nút Xóa có xác nhận -->
+                                            <a href="@Url.Action("Delete", "Category", new { id = item.CategoryID })"
+                                               class="btn btn-danger btn-xs"
+                                               onclick="return confirm('Bạn có chắc chắn muốn xóa danh mục [@item.Name] không?');"
+                                               title="Xóa">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted">Chưa có dữ liệu danh mục nào.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

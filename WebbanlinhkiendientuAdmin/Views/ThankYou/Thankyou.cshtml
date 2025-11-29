@@ -1,0 +1,113 @@
+﻿@{
+    ViewBag.Title = "Đặt hàng thành công";
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+
+<style>
+    /* CSS riêng để trang cảm ơn đẹp hơn */
+    .aa-error-area {
+        padding: 50px 0;
+        text-align: center;
+    }
+
+    .success-icon {
+        font-size: 80px;
+        color: #28a745;
+        margin-bottom: 20px;
+    }
+
+    .order-success-title {
+        font-size: 36px;
+        font-weight: bold;
+        color: #333;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+    }
+
+    .order-success-msg {
+        font-size: 18px;
+        color: #666;
+        margin-bottom: 30px;
+    }
+
+    .btn-home {
+        display: inline-block;
+        padding: 12px 30px;
+        background-color: #d31e1e;
+        color: #fff;
+        text-transform: uppercase;
+        font-weight: bold;
+        border-radius: 4px;
+        transition: 0.3s;
+    }
+
+        .btn-home:hover {
+            background-color: #333;
+            color: #fff;
+            text-decoration: none;
+        }
+
+    .btn-history {
+        display: inline-block;
+        padding: 12px 30px;
+        background-color: #fff;
+        color: #333;
+        border: 1px solid #ccc;
+        text-transform: uppercase;
+        font-weight: bold;
+        border-radius: 4px;
+        transition: 0.3s;
+        margin-left: 10px;
+    }
+
+        .btn-history:hover {
+            background-color: #eee;
+            text-decoration: none;
+            color: #333;
+        }
+</style>
+
+<!-- Thank you section -->
+<section id="aa-error">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="aa-error-area">
+                    <!-- Icon dấu tích xanh -->
+                    <i class="fa fa-check-circle success-icon"></i>
+
+                    <h2 class="order-success-title">Cảm Ơn Bạn!</h2>
+                    <span class="order-success-msg">Đơn hàng của bạn đã được đặt thành công.</span>
+
+                    <div style="margin: 20px 0;">
+                        <p><strong>ShopHNT</strong> - Nơi cung cấp Linh Kiện Điện Tử uy tín.</p>
+                        <p>Chúng tôi sẽ liên hệ để xác nhận đơn hàng trong thời gian sớm nhất.</p>
+
+                        <!-- Nếu Controller có truyền Mã đơn hàng sang TempData thì hiện ở đây -->
+                        @if (TempData["OrderID"] != null)
+                        {
+                            <div class="alert alert-success" style="display:inline-block; margin-top:10px;">
+                                Mã đơn hàng của bạn: <strong>#@TempData["OrderID"]</strong>
+                            </div>
+                        }
+                    </div>
+
+                    <div style="margin-top: 30px;">
+                        <a href="@Url.Action("Index", "Home")" class="btn-home">
+                            <i class="fa fa-home"></i> Về trang chủ
+                        </a>
+
+                        <!-- Nếu đã đăng nhập thì hiện nút xem đơn hàng -->
+                        @if (Session["UserID"] != null)
+                        {
+                            <a href="@Url.Action("Profile", "Account")" class="btn-history">
+                                <i class="fa fa-list-alt"></i> Xem đơn hàng
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- / Thank you section -->

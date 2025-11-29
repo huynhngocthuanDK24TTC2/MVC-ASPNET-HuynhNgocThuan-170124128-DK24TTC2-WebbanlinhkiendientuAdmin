@@ -1,0 +1,104 @@
+﻿@model WebbanlinhkiendientuAdmin.Models.SubCategory
+
+@{
+    ViewBag.Title = "Thêm danh mục con";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- 1. TIÊU ĐỀ TRANG -->
+<div class="row">
+    <div class="col-lg-12">
+        <h3 class="page-header" style="color: #5bc0de; border-bottom: 2px solid #ddd; margin-top: 20px;">
+            <i class="fa fa-sitemap"></i> Thêm Danh Mục Con
+        </h3>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <!-- 2. KHUNG PANEL  -->
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Nhập thông tin danh mục</h3>
+            </div>
+            <div class="panel-body" style="padding: 30px;">
+
+                <!-- SỬ DỤNG HTML.BEGINFORM (Đồng bộ với Controller) -->
+                @using (Html.BeginForm("Create", "SubCategory", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <!-- Hiển thị lỗi tổng quát -->
+                    @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+
+                    <div class="row">
+                        <!-- CỘT 1 -->
+                        <div class="col-md-6">
+                            <!-- Tên danh mục con -->
+                            <div class="form-group">
+                                <label class="control-label">Tên danh mục con <span class="text-danger">*</span></label>
+                                @Html.TextBoxFor(m => m.Name, new { @class = "form-control", placeholder = "Ví dụ: VGA NVIDIA, CPU Intel...", autofocus = "autofocus" })
+                                @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+                            </div>
+
+                            <!-- Chọn danh mục cha (Dropdown) -->
+                            <div class="form-group">
+                                <label class="control-label">Thuộc danh mục cha <span class="text-danger">*</span></label>
+                                <!-- ViewBag.CategoryList: Chữ C hoa khớp với Controller -->
+                                @Html.DropDownListFor(m => m.CategoryID, ViewBag.CategoryList as SelectList, "— Chọn danh mục cha —", new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.CategoryID, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <!-- CỘT 2 -->
+                        <div class="col-md-6">
+                            <!-- Mô tả -->
+                            <div class="form-group">
+                                <label class="control-label">Mô tả / Ghi chú</label>
+                                @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows = 4, placeholder = "Mô tả chi tiết (nếu có)..." })
+                                @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
+                            </div>
+
+                            <!-- Trạng thái (CHECKBOX CHUẨN) -->
+                            <div class="form-group">
+                                <label class="control-label">Trạng thái</label>
+                                <div class="checkbox">
+                                    <label>
+                                        <!-- Input checkbox thủ công xử lý null -->
+                                        <input type="checkbox" name="isActive" value="true" @(Model == null || Model.isActive.GetValueOrDefault(true) ? "checked" : "") />
+
+                                        <!-- Input hidden để gửi giá trị false nếu không check -->
+                                        <input type="hidden" name="isActive" value="false" />
+
+                                        <strong>Kích hoạt hiển thị</strong>
+                                    </label>
+                                </div>
+                                @Html.ValidationMessageFor(m => m.isActive, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <!-- NÚT BẤM -->
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fa fa-save"></i> Lưu Danh Mục Con
+                            </button>
+                            &nbsp;
+                            <a href="@Url.Action("Index", "SubCategory")" class="btn btn-default btn-lg">
+                                <i class="fa fa-arrow-left"></i> Quay lại
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+}

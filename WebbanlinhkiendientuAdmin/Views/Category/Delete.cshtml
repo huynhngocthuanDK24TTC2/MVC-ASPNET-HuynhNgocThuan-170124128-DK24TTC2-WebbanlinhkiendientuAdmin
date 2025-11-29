@@ -1,0 +1,86 @@
+﻿@model WebbanlinhkiendientuAdmin.Models.Category
+
+@{
+    ViewBag.Title = "Xóa danh mục";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h2 class="page-header text-danger">
+            <i class="fa fa-trash"></i> Xóa danh mục sản phẩm
+        </h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+        <!-- Hiển thị thông báo lỗi (nếu không xóa được do dính khóa ngoại) -->
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <h4><i class="icon fa fa-ban"></i> Lỗi!</h4>
+                @TempData["Error"]
+            </div>
+        }
+
+        <div class="panel panel-danger">
+            <div class="panel-heading">
+                <h3 class="panel-title">Bạn có chắc chắn muốn xóa danh mục này?</h3>
+            </div>
+            <div class="panel-body">
+                <div class="alert alert-warning">
+                    <i class="fa fa-exclamation-triangle"></i>
+                    <strong>Cảnh báo:</strong> Hành động này không thể hoàn tác. Vui lòng kiểm tra kỹ trước khi xóa.
+                </div>
+
+                <dl class="dl-horizontal" style="font-size: 14px;">
+                    <dt>Tên danh mục:</dt>
+                    <dd class="text-primary" style="font-weight: bold; margin-bottom: 10px;">
+                        @Model.Name
+                    </dd>
+
+                    <dt>Mô tả:</dt>
+                    <dd style="margin-bottom: 10px;">
+                        @(string.IsNullOrEmpty(Model.Description) ? "Không có mô tả" : Model.Description)
+                    </dd>
+
+                    <dt>Trạng thái:</dt>
+                    <dd style="margin-bottom: 10px;">
+                        @if (Model.isActive == true)
+                        {
+                            <span class="label label-success">Đang hiển thị</span>
+                        }
+                        else
+                        {
+                            <span class="label label-default">Đang ẩn</span>
+                        }
+                    </dd>
+
+                    <!-- Đếm số lượng danh mục con đang chứa (Cảnh báo người dùng) -->
+                    <dt>Số danh mục con:</dt>
+                    <dd class="text-danger">
+                        @(Model.SubCategories != null ? Model.SubCategories.Count : 0) danh mục phụ thuộc
+                    </dd>
+                </dl>
+
+                <hr />
+
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="text-right">
+                        <a href="@Url.Action("Index")" class="btn btn-default">
+                            <i class="fa fa-arrow-left"></i> Hủy bỏ
+                        </a>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fa fa-trash"></i> Xác nhận xóa
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

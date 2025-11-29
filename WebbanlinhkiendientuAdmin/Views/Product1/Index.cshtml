@@ -1,0 +1,110 @@
+﻿@{
+    ViewBag.Title = "Bảng điều khiển quản trị";
+    // QUAN TRỌNG: Đưa về Layout chuẩn để thống nhất giao diện với các trang Product
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <h2 class="text-uppercase text-primary border-bottom pb-2">
+            <i class="fa-solid fa-gauge-high"></i> Tổng quan hệ thống
+        </h2>
+        <p class="text-muted">Chào mừng bạn quay trở lại trang quản trị linh kiện điện tử.</p>
+    </div>
+</div>
+
+<!-- Hàng thống kê (Dashboard Widgets) -->
+<div class="row g-3">
+    <!-- Box 1: Tổng số sản phẩm -->
+    <div class="col-md-3 col-sm-6">
+        <div class="card text-white bg-primary mb-3 h-100 shadow-sm">
+            <div class="card-header border-0 font-weight-bold">SẢN PHẨM</div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="card-title mb-0">@(ViewBag.CountProducts ?? 0)</h3>
+                        <p class="card-text small">Tổng số linh kiện</p>
+                    </div>
+                    <i class="fa-solid fa-microchip fa-3x opacity-50"></i>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent border-0">
+                <a href="@Url.Action("Index", "Product")" class="text-white text-decoration-none">
+                    Xem chi tiết <i class="fa-solid fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Box 2: Tổng số đơn hàng (Giả định) -->
+    <div class="col-md-3 col-sm-6">
+        <div class="card text-white bg-success mb-3 h-100 shadow-sm">
+            <div class="card-header border-0 font-weight-bold">ĐƠN HÀNG</div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="card-title mb-0">@(ViewBag.CountOrders ?? 0)</h3>
+                        <p class="card-text small">Đơn hàng mới</p>
+                    </div>
+                    <i class="fa-solid fa-cart-shopping fa-3x opacity-50"></i>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent border-0">
+                <a href="#" class="text-white text-decoration-none">
+                    Quản lý đơn <i class="fa-solid fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Box 3: Khách hàng -->
+    <div class="col-md-3 col-sm-6">
+        <div class="card text-white bg-warning mb-3 h-100 shadow-sm">
+            <div class="card-header border-0 font-weight-bold">KHÁCH HÀNG</div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="text-dark">
+                        <h3 class="card-title mb-0">@(ViewBag.CountUsers ?? 0)</h3>
+                        <p class="card-text small">Thành viên đăng ký</p>
+                    </div>
+                    <i class="fa-solid fa-users fa-3x opacity-50 text-dark"></i>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent border-0">
+                <a href="#" class="text-dark text-decoration-none">
+                    Xem danh sách <i class="fa-solid fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Box 4: Cảnh báo hết hàng -->
+    <div class="col-md-3 col-sm-6">
+        <div class="card text-white bg-danger mb-3 h-100 shadow-sm">
+            <div class="card-header border-0 font-weight-bold">SẮP HẾT HÀNG</div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="card-title mb-0">@(ViewBag.LowStock ?? 0)</h3>
+                        <p class="card-text small">Cần nhập thêm</p>
+                    </div>
+                    <i class="fa-solid fa-triangle-exclamation fa-3x opacity-50"></i>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent border-0">
+                <a href="@Url.Action("Index", "Product")" class="text-white text-decoration-none">
+                    Kiểm tra kho <i class="fa-solid fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="alert alert-info">
+            <i class="fa-solid fa-bullhorn"></i>
+            <strong>Thông báo hệ thống:</strong> Đừng quên sao lưu dữ liệu (Database) định kỳ hàng tuần.
+        </div>
+    </div>
+</div>

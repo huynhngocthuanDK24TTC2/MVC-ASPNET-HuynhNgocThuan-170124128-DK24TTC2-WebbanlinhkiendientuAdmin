@@ -1,0 +1,203 @@
+﻿@model WebbanlinhkiendientuAdmin.Models.Product
+
+@{
+    ViewBag.Title = "Thêm sản phẩm mới";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- TIÊU ĐỀ -->
+<div class="row">
+    <div class="col-lg-12">
+        <h3 class="page-header" style="color: #5bc0de; border-bottom: 2px solid #ddd; margin-top: 20px;">
+            <i class="fa fa-plus-square"></i> Thêm Sản Phẩm Mới
+        </h3>
+    </div>
+</div>
+
+<!-- THÔNG BÁO LỖI -->
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <i class="fa fa-exclamation-triangle"></i> @TempData["Error"]
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-12">
+        
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title">Nhập thông tin sản phẩm</h3>
+            </div>
+            <div class="panel-body" style="padding: 30px;">
+
+                <!-- FORM UPLOAD: enctype="multipart/form-data" -->
+                @using (Html.BeginForm("Create", "Product", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+
+                    <!-- CỘT TRÁI: THÔNG TIN CƠ BẢN -->
+                    <div class="col-md-6">
+
+                        <!-- Tên sản phẩm -->
+                        <div class="form-group">
+                            <label class="control-label">Tên sản phẩm <span class="text-danger">*</span></label>
+                            @Html.TextBoxFor(m => m.Name, new { @class = "form-control", placeholder = "Ví dụ: VGA Asus RTX 3060...", required = "required" })
+                            @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+                        </div>
+
+                        <!-- Nhà cung cấp -->
+                        <div class="form-group">
+                            <label class="control-label">Nhà cung cấp <span class="text-danger">*</span></label>
+                            @Html.DropDownList("SupplierID", null, "-- Chọn nhà cung cấp --", new { @class = "form-control", required = "required" })
+                        </div>
+
+                        <!-- Danh mục Cha (Có Ajax) -->
+                        <div class="form-group">
+                            <label class="control-label">Danh mục chính <span class="text-danger">*</span></label>
+                            <!-- Thêm id="CategoryID" để JS bắt sự kiện -->
+                            @Html.DropDownList("CategoryID", null, "-- Chọn danh mục --", new { @class = "form-control", @id = "CategoryID", onchange = "loadSubCategories()", required = "required" })
+                        </div>
+
+                        <!-- Danh mục Con (Load từ Ajax) -->
+                        <div class="form-group">
+                            <label class="control-label">Danh mục con</label>
+                            <select id="SubCategoryID" name="SubCategoryID" class="form-control" disabled>
+                                <option value="">-- Vui lòng chọn danh mục chính trước --</option>
+                            </select>
+                        </div>
+
+                        <!-- Tồn kho -->
+                        <div class="form-group">
+                            <label class="control-label">Số lượng nhập kho</label>
+                            @Html.TextBoxFor(m => m.UnitInStock, new { @class = "form-control", type = "number", min = "0", Value = "10" })
+                        </div>
+
+                    </div>
+
+                    <!-- CỘT PHẢI: GIÁ & ẢNH -->
+                    <div class="col-md-6">
+
+                        <!-- Giá bán -->
+                        <div class="form-group">
+                            <label class="control-label">Giá bán (VNĐ) <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                @Html.TextBoxFor(m => m.UnitPrice, new { @class = "form-control text-right", type = "number", min = "0", placeholder = "0" })
+                                <span class="input-group-addon">₫</span>
+                            </div>
+                            @Html.ValidationMessageFor(m => m.UnitPrice, "", new { @class = "text-danger" })
+                        </div>
+
+                        <!-- Giá cũ -->
+                        <div class="form-group">
+                            <label class="control-label">Giá niêm yết (Cũ)</label>
+                            <div class="input-group">
+                                @Html.TextBoxFor(m => m.OldPrice, new { @class = "form-control text-right", type = "number", min = "0", placeholder = "0" })
+                                <span class="input-group-addon">₫</span>
+                            </div>
+                            <p class="help-block small">Nhập giá cao hơn giá bán để tạo hiển thị giảm giá.</p>
+                        </div>
+
+                        <!-- Ảnh đại diện -->
+                        <div class="form-group">
+                            <label class="control-label">Hình ảnh đại diện</label>
+                            <!--  name="Picture" để khớp với Controller -->
+                            <input type="file" name="Picture" class="form-control" accept="image/*" onchange="previewImage(this)" />
+
+                            <!-- Khung xem trước ảnh -->
+                            <div style="margin-top: 10px; text-align: center;">
+                                <img id="imgPreview" src="~/Images/no-image.jpg"
+                                     class="img-thumbnail" style="height: 150px; width: auto; display: none;" />
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- HÀNG NGANG: MÔ TẢ & GHI CHÚ -->
+                    <div class="col-md-12">
+                        <hr />
+                        <div class="form-group">
+                            <label class="control-label">Mô tả ngắn / Thông số kỹ thuật</label>
+                            @Html.TextAreaFor(m => m.ShortDescription, new { @class = "form-control", rows = 4 })
+                        </div>
+
+                        <!-- Nếu Model có cột Note -->
+                        <div class="form-group">
+                            <label class="control-label">Ghi chú (Bảo hành/Tình trạng)</label>
+                            @Html.TextAreaFor(m => m.Note, new { @class = "form-control", rows = 2 })
+                        </div>
+                    </div>
+
+                    <!-- NÚT BẤM -->
+                    <div class="col-md-12 text-center" style="margin-top: 20px;">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fa fa-save"></i> LƯU SẢN PHẨM
+                        </button>
+                        &nbsp;
+                        <a href="@Url.Action("Index")" class="btn btn-default btn-lg">
+                            <i class="fa fa-arrow-left"></i> Quay lại
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <!-- Scripts Validation -->
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+    <script>
+        // 1. Preview Ảnh
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#imgPreview').attr('src', e.target.result).show(); // Hiện ảnh lên
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // 2. Ajax Load SubCategory (Dropdown phụ thuộc)
+        function loadSubCategories() {
+            var catId = $("#CategoryID").val(); // Lấy ID danh mục cha
+            var subSelect = $("#SubCategoryID");
+
+            if (catId) {
+                subSelect.prop("disabled", false); // Mở khóa
+                subSelect.html("<option>Đang tải...</option>");
+
+                $.ajax({
+                    url: '@Url.Action("GetSubCategories", "Product")', // Gọi hàm trong Controller
+                    type: "GET",
+                    data: { categoryId: catId },
+                    success: function (data) {
+                        subSelect.empty();
+                        if (data.length > 0) {
+                            subSelect.append('<option value="">-- Chọn danh mục con --</option>');
+                            $.each(data, function (i, item) {
+                                subSelect.append($('<option>', {
+                                    value: item.Value,
+                                    text: item.Text
+                                }));
+                            });
+                        } else {
+                            subSelect.append('<option value="">Không có danh mục con</option>');
+                        }
+                    },
+                    error: function () {
+                        subSelect.html('<option value="">Lỗi tải dữ liệu</option>');
+                    }
+                });
+            } else {
+                subSelect.prop("disabled", true);
+                subSelect.html('<option value="">-- Vui lòng chọn danh mục chính trước --</option>');
+            }
+        }
+    </script>
+}

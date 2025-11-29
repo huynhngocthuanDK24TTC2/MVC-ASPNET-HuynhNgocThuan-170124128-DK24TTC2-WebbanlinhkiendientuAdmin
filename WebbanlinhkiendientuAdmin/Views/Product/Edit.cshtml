@@ -1,0 +1,210 @@
+﻿@model WebbanlinhkiendientuAdmin.Models.Product
+
+@{
+    ViewBag.Title = "Cập nhật sản phẩm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- TIÊU ĐỀ -->
+<div class="row">
+    <div class="col-lg-12">
+        <h3 class="page-header" style="color: #f0ad4e; border-bottom: 2px solid #ddd; margin-top: 20px;">
+            <i class="fa fa-pencil-square-o"></i> Cập Nhật Sản Phẩm
+        </h3>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <!-- PANEL WARNING (Màu vàng cho trang Sửa) -->
+        <div class="panel panel-warning">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-xs-8">
+                        <h3 class="panel-title" style="line-height: 30px;">
+                            Thông tin: <strong>@Model.Name</strong>
+                        </h3>
+                    </div>
+                    <div class="col-xs-4 text-right">
+                        <span class="badge">ID: @Model.ProductID</span>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body" style="padding: 30px;">
+
+                <!-- Form Upload: enctype="multipart/form-data" -->
+                @using (Html.BeginForm("Edit", "Product", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal", id = "editProductForm" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(x => x.ProductID)
+                    <!-- Giữ lại đường dẫn ảnh cũ -->
+                    @Html.HiddenFor(x => x.PicturePath)
+
+                    <div class="row">
+                        <!-- CỘT TRÁI -->
+                        <div class="col-md-6">
+                            <!-- Tên SP -->
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Tên SP <span class="text-danger">*</span></label>
+                                <div class="col-md-9">
+                                    @Html.TextBoxFor(x => x.Name, new { @class = "form-control", required = "required" })
+                                    @Html.ValidationMessageFor(x => x.Name, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <!-- Nhà cung cấp -->
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Nhà cung cấp</label>
+                                <div class="col-md-9">
+                                    @Html.DropDownList("SupplierID", null, new { @class = "form-control" })
+                                </div>
+                            </div>
+
+                            <!-- Giá bán -->
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Giá bán</label>
+                                <div class="col-md-9">
+                                    <div class="input-group">
+                                        @Html.TextBoxFor(x => x.UnitPrice, "{0:0}", new { @class = "form-control", type = "number" })
+                                        <span class="input-group-addon">₫</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Giá cũ -->
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Giá cũ</label>
+                                <div class="col-md-9">
+                                    <div class="input-group">
+                                        @Html.TextBoxFor(x => x.OldPrice, "{0:0}", new { @class = "form-control", type = "number" })
+                                        <span class="input-group-addon">₫</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CỘT PHẢI -->
+                        <div class="col-md-6">
+                            <!-- Danh mục Cha -->
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Danh mục</label>
+                                <div class="col-md-9">
+                                    <!-- ID="CategoryID" để Ajax bắt sự kiện -->
+                                    @Html.DropDownList("CategoryID", null, new { @class = "form-control", id = "CategoryID" })
+                                </div>
+                            </div>
+
+                            <!-- Danh mục Con -->
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Danh mục con</label>
+                                <div class="col-md-9">
+                                    <!-- ID="SubCategoryID" -->
+                                    @Html.DropDownList("SubCategoryID", null, "-- Chọn --", new { @class = "form-control", id = "SubCategoryID" })
+                                </div>
+                            </div>
+
+                            <!-- Tồn kho -->
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Tồn kho</label>
+                                <div class="col-md-9">
+                                    @Html.TextBoxFor(x => x.UnitInStock, new { @class = "form-control", type = "number" })
+                                </div>
+                            </div>
+
+                            <!-- Ảnh (Cả cũ và mới) -->
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Ảnh</label>
+                                <div class="col-md-9">
+                                    <!-- Hiển thị ảnh cũ -->
+                                    <div style="margin-bottom: 10px;">
+                                        <img src="@Url.Content(string.IsNullOrEmpty(Model.PicturePath) ? "~/Images/no-image.jpg" : Model.PicturePath)"
+                                             id="imgPreview"
+                                             class="img-thumbnail"
+                                             style="height: 100px; width: auto;" />
+                                    </div>
+
+                                   
+                                    <input type="file" name="Picture" class="form-control" accept="image/*" onchange="previewImage(this)" />
+                                    <p class="help-block small">Chọn ảnh mới để thay thế (nếu cần).</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- HÀNG DƯỚI: MÔ TẢ -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <hr />
+                            <div class="form-group">
+                                <label class="control-label col-md-1" style="width: 12%;">Mô tả ngắn</label>
+                                <div class="col-md-11" style="width: 88%;">
+                                    @Html.TextAreaFor(x => x.ShortDescription, new { @class = "form-control", rows = "3" })
+                                </div>
+                            </div>
+
+                            <!-- Nếu có Note -->
+                            <div class="form-group">
+                                <label class="control-label col-md-1" style="width: 12%;">Ghi chú</label>
+                                <div class="col-md-11" style="width: 88%;">
+                                    @Html.TextAreaFor(x => x.Note, new { @class = "form-control", rows = "2" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 text-right">
+                            <hr />
+                            <a href="@Url.Action("Index")" class="btn btn-default">
+                                <i class="fa fa-reply"></i> Quay lại
+                            </a>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fa fa-save"></i> Lưu thay đổi
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        // 1. Ajax Load Danh Mục Con
+        $(document).ready(function () {
+            $("#CategoryID").change(function () {
+                var catId = $(this).val();
+                var subSelect = $("#SubCategoryID");
+
+                if (catId) {
+                    subSelect.html("<option>Đang tải...</option>");
+                    subSelect.prop("disabled", false);
+
+                    // Dùng Url.Action để lấy đường dẫn chính xác
+                    $.get('@Url.Action("GetSubCategories", "Product")', { categoryId: catId }, function (data) {
+                        subSelect.empty();
+                        subSelect.append("<option value=''>-- Chọn danh mục con --</option>");
+                        $.each(data, function (index, row) {
+                            subSelect.append("<option value='" + row.Value + "'>" + row.Text + "</option>");
+                        });
+                    });
+                } else {
+                    subSelect.prop("disabled", true);
+                    subSelect.html("<option value=''>-- Chọn danh mục cha trước --</option>");
+                }
+            });
+        });
+
+        // 2. Preview Ảnh
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#imgPreview').attr('src', e.target.result); // Cập nhật ảnh ngay trên thẻ img có sẵn
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+}

@@ -1,0 +1,209 @@
+﻿@model List<WebbanlinhkiendientuAdmin.Models.OrderDetail>
+
+@{
+    ViewBag.Title = "Giỏ hàng của bạn";
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+
+    // Tính tổng tiền toàn giỏ hàng
+    decimal grandTotal = 0;
+    if (Model != null)
+    {
+        grandTotal = Model.Sum(x => (decimal)x.UnitPrice * (int)x.Quantity);
+    }
+}
+
+<!-- CSS Tùy chỉnh cho Giỏ hàng -->
+<style>
+    .cart-area {
+        padding: 50px 0;
+    }
+
+    .table > thead > tr > th {
+        border-bottom: 2px solid #d31e1e;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .table > tbody > tr > td {
+        vertical-align: middle;
+    }
+
+    .btn-update {
+        background-color: #fff;
+        border: 1px solid #ccc;
+        color: #333;
+        font-weight: bold;
+        padding: 10px 20px;
+    }
+
+        .btn-update:hover {
+            background-color: #eee;
+        }
+
+    .btn-checkout {
+        background-color: #d31e1e;
+        color: #fff;
+        border: none;
+        padding: 12px 25px;
+        font-weight: bold;
+        text-transform: uppercase;
+        text-decoration: none;
+        display: inline-block;
+        border-radius: 3px;
+    }
+
+        .btn-checkout:hover {
+            background-color: #333;
+            color: #fff;
+            text-decoration: none;
+        }
+</style>
+
+<!-- Banner -->
+<section id="aa-catg-head-banner">
+    <div class="aa-catg-head-banner-area">
+        <div class="container">
+            <div class="aa-catg-head-banner-content">
+                <h2>Giỏ hàng của tôi</h2>
+                <ol class="breadcrumb">
+                    <li><a href="@Url.Action("Index","Home")">Trang chủ</a></li>
+                    <li class="active">Giỏ hàng</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Nội dung giỏ hàng -->
+<section id="cart-view">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="cart-area">
+
+                    <!-- 1. Chưa đăng nhập -->
+                    @if (Session["UserID"] == null)
+                    {
+                        <div class="alert alert-warning text-center" style="padding: 50px;">
+                            <i class="fa fa-lock fa-3x"></i>
+                            <h3>Bạn chưa đăng nhập</h3>
+                            <p>Vui lòng <a href="@Url.Action("Login","Account", new { returnUrl = Request.Url.PathAndQuery })" style="font-weight:bold; text-decoration:underline;">đăng nhập</a> để xem giỏ hàng của bạn.</p>
+                        </div>
+                    }
+                    /* 2. Giỏ hàng trống */
+                    else if (Model == null || !Model.Any())
+                    {
+                        <div class="alert alert-info text-center" style="padding: 50px;">
+                            <i class="fa fa-shopping-cart fa-3x"></i>
+                            <h3>Giỏ hàng trống</h3>
+                            <p>Bạn chưa chọn sản phẩm nào.</p>
+                            <a href="@Url.Action("Index","Home")" class="aa-browse-btn" style="background:#d31e1e; color:#fff; width:auto; padding:10px 20px; margin-top:20px;">Tiếp tục mua sắm</a>
+                        </div>
+                    }
+                    /* 3. Có sản phẩm */
+                    else
+                    {
+                        <!-- Form cập nhật giỏ hàng -->
+                        using (Html.BeginForm("UpdateCart", "MyCart", FormMethod.Post))
+                        {
+                            @Html.AntiForgeryToken()
+
+                            <div class="table-responsive">
+                                <table class="table table-hover table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">Xóa</th>
+                                            <th class="text-center">Ảnh</th>
+                                            <th>Sản phẩm</th>
+                                            <th class="text-right">Đơn giá</th>
+                                            <th class="text-center">Số lượng</th>
+                                            <th class="text-right">Thành tiền</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (int i = 0; i < Model.Count; i++)
+                                        {
+                                            <tr>
+                                                <!-- Nút Xóa -->
+                                                <td class="text-center">
+                                                    <a href="@Url.Action("Remove", "MyCart", new { id = Model[i].ProductID })" onclick="return confirm('Xóa sản phẩm này khỏi giỏ?');" title="Xóa">
+                                                        <i class="fa fa-times-circle" style="color: #d31e1e; font-size: 20px;"></i>
+                                                    </a>
+
+                                                    <!-- Input ẩn để binding List -->
+                                                    <input type="hidden" name="[@i].ProductID" value="@Model[i].ProductID" />
+                                                </td>
+
+                                                <!-- Ảnh -->
+                                                <td class="text-center">
+                                                    <a href="@Url.Action("Details", "PShop", new { id = Model[i].ProductID })">
+                                                        <img src="@Url.Content(string.IsNullOrEmpty(Model[i].Product?.PicturePath) ? "~/Images/no-image.jpg" : Model[i].Product.PicturePath)"
+                                                             alt="img" style="width:60px; height:60px; object-fit:cover; border: 1px solid #ddd;">
+                                                    </a>
+                                                </td>
+
+                                                <!-- Tên -->
+                                                <td>
+                                                    <a href="@Url.Action("Details", "PShop", new { id = Model[i].ProductID })" style="font-weight:bold; color:#333;">
+                                                        @Model[i].Product.Name
+                                                    </a>
+                                                </td>
+
+                                                <!-- Đơn giá -->
+                                                <td class="text-right">
+                                                    @string.Format("{0:N0} đ", Model[i].UnitPrice)
+                                                </td>
+
+                                                <!-- Số lượng (Cho phép sửa) -->
+                                                <td class="text-center">
+                                                    <input type="number" name="[@i].Quantity" value="@Model[i].Quantity" min="1" max="99"
+                                                           class="form-control text-center" style="width: 70px; margin: 0 auto;" />
+                                                </td>
+
+                                                <!-- Thành tiền -->
+                                                <td class="text-right" style="color: #d31e1e; font-weight: bold;">
+                                                    @string.Format("{0:N0} đ", Model[i].UnitPrice * Model[i].Quantity)
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Khu vực Tổng tiền & Nút bấm -->
+                            <div class="row" style="margin-top: 30px;">
+                                <div class="col-md-6 col-md-offset-6">
+                                    <div class="cart-total-area" style="border: 1px solid #eee; padding: 20px;">
+                                        <h4 style="border-bottom: 1px solid #eee; padding-bottom: 10px; font-weight: bold;">TỔNG CỘNG GIỎ HÀNG</h4>
+                                        <table class="table" style="margin-bottom: 10px;">
+                                            <tbody>
+                                                <tr>
+                                                    <th>Tổng tiền hàng</th>
+                                                    <td class="text-right" style="font-size: 20px; font-weight: bold; color: #d31e1e;">
+                                                        @string.Format("{0:N0} đ", grandTotal)
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                        <div class="text-right">
+                                            <!-- Nút Cập nhật (Submit form hiện tại) -->
+                                            <button type="submit" class="btn-update">
+                                                <i class="fa fa-refresh"></i> Cập nhật giỏ hàng
+                                            </button>
+
+                                            <!-- Nút Thanh toán (Link chuyển trang) -->
+                                            <a href="@Url.Action("Index", "CheckOut")" class="btn-checkout">
+                                                Tiến hành thanh toán <i class="fa fa-arrow-right"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

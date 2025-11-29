@@ -1,0 +1,246 @@
+﻿@using WebbanlinhkiendientuAdmin.Models
+@model Product
+
+@{
+    ViewBag.Title = Model.Name;
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+
+<!-- CSS TÙY CHỈNH RIÊNG CHO TRANG CHI TIẾT -->
+<style>
+    
+    .simpleLens-big-image {
+        width: 100%;
+        max-height: 450px;
+        object-fit: contain; /* Giữ ảnh không bị méo */
+        border: 1px solid #eee;
+        padding: 10px;
+    }
+
+    /* Màu sao đánh giá */
+    .fa-star {
+        color: #ff6600;
+    }
+
+    .fa-star-o {
+        color: #ccc;
+    }
+
+    /* Tên sản phẩm */
+    .product-detail-name {
+        color: #333;
+        font-weight: bold;
+        margin-top: 0;
+        text-transform: uppercase;
+        line-height: 1.4;
+    }
+</style>
+
+<section id="aa-product-details">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="aa-product-details-area">
+                    <div class="aa-product-details-content">
+                        <div class="row">
+
+                            <!-- 1. HÌNH ẢNH SẢN PHẨM (ZOOM) -->
+                            <div class="col-md-5 col-sm-5 col-xs-12">
+                                <div class="aa-product-view-slider">
+                                    <div id="demo-1" class="simpleLens-gallery-container">
+                                        <div class="simpleLens-container">
+                                            <div class="simpleLens-big-image-container">
+                                                @{
+                                                    var imgPath = !string.IsNullOrEmpty(Model.PicturePath) ? Url.Content(Model.PicturePath) : Url.Content("~/Images/no-image.jpg");
+                                                }
+                                                <a data-lens-image="@imgPath" class="simpleLens-lens-image">
+                                                    <img src="@imgPath" class="simpleLens-big-image" alt="@Model.Name">
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 2. THÔNG TIN CHI TIẾT BÊN PHẢI -->
+                            <div class="col-md-7 col-sm-7 col-xs-12">
+                                <div class="aa-product-view-content">
+                                    <h2 class="product-detail-name">@Model.Name</h2>
+
+                                    <!-- Đánh giá sao -->
+                                    <div class="aa-product-rating">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            if (ViewBag.AvgRate >= i)
+                                            {<span class="fa fa-star"></span> }
+                                            else
+                                            { <span class="fa fa-star-o"></span>}
+                                        }
+                                        <span class="text-muted" style="margin-left:10px;">(@(ViewBag.TotalReviews ?? 0) đánh giá)</span>
+                                    </div>
+
+                                    <!-- Giá và Trạng thái -->
+                                    <div class="aa-price-block" style="margin: 20px 0; border-bottom: 1px solid #eee; padding-bottom: 20px;">
+                                        <span class="aa-product-view-price" style="font-size: 32px; color: #d31e1e; font-weight: bold;">
+                                            @string.Format("{0:N0} đ", Model.UnitPrice)
+                                        </span>
+                                        @if (Model.OldPrice > Model.UnitPrice)
+                                        {
+                                            <span class="text-muted" style="text-decoration:line-through; margin-left:15px; font-size: 16px;">
+                                                @string.Format("{0:N0} đ", Model.OldPrice)
+                                            </span>
+                                        }
+
+                                        <p class="aa-product-avilability" style="margin-top:10px; font-size: 14px;">
+                                            Trạng thái:
+                                            @if (Model.UnitInStock > 0)
+                                            {<span class="label label-success">Còn hàng (@Model.UnitInStock sản phẩm)</span> }
+                                        else
+                                        { <span class="label label-danger">Tạm hết hàng</span>}
+                                        </p>
+                                    </div>
+
+                                    <!-- Mô tả ngắn -->
+                                    <div style="margin-bottom: 20px;">
+                                        <strong>Mô tả nhanh:</strong>
+                                        <p>@(Model.ShortDescription ?? "Đang cập nhật thông tin chi tiết...")</p>
+                                    </div>
+
+                                    <!-- NÚT HÀNH ĐỘNG -->
+                                    <div class="aa-prod-view-bottom">
+                                        @if (Model.UnitInStock > 0)
+                                        {
+                                            <a class="aa-add-to-cart-btn" href="@Url.Action("AddToCart", "MyCart", new { id = Model.ProductID })" style="background-color: #d31e1e; color: white; border: none;">
+                                                <span class="fa fa-shopping-cart"></span> THÊM VÀO GIỎ HÀNG
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a class="aa-add-to-cart-btn disabled" style="background:#ccc; cursor:not-allowed; color: #555;">HẾT HÀNG</a>
+                                        }
+
+                                        <!-- Nút yêu thích -->
+                                            <a class="aa-add-to-cart-btn" href="@Url.Action("AddItem", "WishList", new { id = Model.ProductID })">Yêu thích</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. TAB MÔ TẢ & ĐÁNH GIÁ -->
+                    <div class="aa-product-details-bottom">
+                        <ul class="nav nav-tabs" id="myTab2">
+                            <li><a href="#description" data-toggle="tab">Mô tả chi tiết</a></li>
+                            <li class="active"><a href="#review" data-toggle="tab">Đánh giá (@(ViewBag.TotalReviews ?? 0))</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                            <!-- Tab 1: Mô tả -->
+                            <div class="tab-pane fade" id="description">
+                                
+                                @Html.Raw(Model.ShortDescription ?? "<p>Thông tin đang được cập nhật.</p>")
+                            </div>
+
+                            <!-- Tab 2: Đánh giá -->
+                            <div class="tab-pane fade in active" id="review">
+                                <div class="aa-product-review-area">
+                                    <h4><b>@(ViewBag.TotalReviews ?? 0)</b> Đánh giá từ khách hàng</h4>
+
+                                    <ul class="aa-review-nav">
+                                        @if (ViewBag.Reviews != null)
+                                        {
+                                            foreach (var item in (List<Review>)ViewBag.Reviews)
+                                            {
+                                                <li>
+                                                    <div class="media">
+                                                        <div class="media-left">
+                                                            
+                                                            <!-- Kiểm tra: Nếu Customer null hoặc PicturePath rỗng -> Dùng ảnh mặc định -->
+                                                            <img class="media-object img-circle"
+                                                                 src="@Url.Content(!string.IsNullOrEmpty(item.Customer?.PicturePath) ? item.Customer.PicturePath : "~/Images/UserAvatar/no-image.jpg")"
+                                                                 alt="Avatar"
+                                                                 style="width: 50px; height: 50px; object-fit: cover; border: 1px solid #ddd;">
+                                                        </div>
+                                                        <div class="media-body">
+                                                            <h4 class="media-heading">
+                                                                <!-- Nếu item.Customer null thì hiện tên người dùng lưu trong review -->
+                                                                <strong>@(item.Customer != null ? item.Customer.First_Name + " " + item.Customer.Last_Name : item.Name)</strong>
+                                                                - <span>@item.DateTime.Value.ToString("dd/MM/yyyy HH:mm")</span>
+                                                            </h4>
+                                                            <div class="aa-product-rating">
+                                                                @for (int i = 1; i <= 5; i++)
+                                                                {
+                                                                    if (item.Rate >= i)
+                                                                    {<span class="fa fa-star"></span> }
+                                                                    else
+                                                                    { <span class="fa fa-star-o"></span>}
+                                                                }
+                                                            </div>
+                                                            <p>@item.Review1</p>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            }
+                                        }
+                                    </ul>
+
+                                    <!-- Form Viết Đánh Giá -->
+                                    <h4 style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">Thêm đánh giá của bạn</h4>
+                                    @if (Session["UserID"] != null)
+                                    {
+                                        using (Html.BeginForm("AddReview", "PShop", new { productID = Model.ProductID }, FormMethod.Post, new { @class = "aa-review-form" }))
+                                        {
+                                            <div class="aa-your-rating">
+                                                <p>Đánh giá sao:</p>
+                                                <select name="rate" class="form-control" style="width:150px; display:inline-block;">
+                                                    <option value="5">5 Sao (Rất tốt)</option>
+                                                    <option value="4">4 Sao (Tốt)</option>
+                                                    <option value="3">3 Sao (Bình thường)</option>
+                                                    <option value="2">2 Sao (Kém)</option>
+                                                    <option value="1">1 Sao (Rất tệ)</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Nội dung đánh giá <span class="text-danger">*</span></label>
+                                                <textarea class="form-control" rows="3" name="message" required placeholder="Chia sẻ cảm nhận của bạn về sản phẩm này..."></textarea>
+                                            </div>
+                                            <button type="submit" class="btn btn-default aa-review-submit" style="background-color:#d31e1e; color:#fff; border:none;">Gửi đánh giá</button>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div class="alert alert-warning">
+                                            Vui lòng <a href="@Url.Action("Login", "Account", new { returnUrl = Request.Url.PathAndQuery })" style="font-weight:bold; text-decoration:underline;">Đăng nhập</a> để viết đánh giá.
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. SẢN PHẨM LIÊN QUAN -->
+                    <div class="aa-product-related-item">
+                        <h3>Sản phẩm liên quan</h3>
+                        <!-- Sử dụng class 'aa-product-catg' để nhận diện CSS Grid 4 cột -->
+                        <ul class="aa-product-catg">
+                            @if (ViewBag.RelatedProducts != null)
+                            {
+                                foreach (var item in (List<Product>)ViewBag.RelatedProducts)
+                                {
+                                    // Gọi lại Partial View _Product để hiển thị giống hệt trang chủ
+                                    Html.RenderPartial("_Product", item);
+                                }
+                            }
+                            else
+                            {
+                                <p class="text-muted">Không có sản phẩm liên quan nào.</p>
+                            }
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

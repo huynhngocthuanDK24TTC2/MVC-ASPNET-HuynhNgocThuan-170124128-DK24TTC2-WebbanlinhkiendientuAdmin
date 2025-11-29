@@ -1,0 +1,86 @@
+﻿@model WebbanlinhkiendientuAdmin.Models.Category
+
+@{
+    ViewBag.Title = "Thêm danh mục mới";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- 1. TIÊU ĐỀ TRANG (Chuẩn Admin Bootstrap 3) -->
+<div class="row">
+    <div class="col-lg-12">
+        <h3 class="page-header" style="color: #5bc0de; border-bottom: 2px solid #ddd; margin-top: 20px;">
+            <i class="fa fa-folder-open"></i> Thêm Danh Mục Mới
+        </h3>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <!-- 2. KHUNG PANEL (Thay cho Card của BS5) -->
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Nhập thông tin danh mục</h3>
+            </div>
+            <div class="panel-body" style="padding: 30px;">
+
+                @using (Html.BeginForm("Create", "Category", FormMethod.Post, new { @id = "formCategory" }))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <!-- Hiển thị lỗi tổng quát -->
+                    @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+
+                    <div class="row">
+                        <!-- Tên danh mục -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">Tên danh mục <span class="text-danger">*</span></label>
+                                @Html.TextBoxFor(model => model.Name, new { @class = "form-control", placeholder = "Ví dụ: Linh kiện PC, Laptop...", autofocus = "autofocus" })
+                                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <!-- Trạng thái (Sử dụng Checkbox chuẩn BS3) -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">Trạng thái hiển thị</label>
+                                <div class="checkbox">
+                                    <label>
+                                        <!-- Xử lý checkbox cho Nullable Bool -->
+                                        <input type="checkbox" name="isActive" value="true" @(Model == null || Model.isActive.GetValueOrDefault(true) ? "checked" : "") />
+
+                                        <!-- Input hidden để gửi giá trị false nếu bỏ tích -->
+                                        <input type="hidden" name="isActive" value="false" />
+
+                                        <strong>Hiển thị ngay trên web</strong>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <!-- NÚT BẤM -->
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fa fa-save"></i> Lưu Dữ Liệu
+                            </button>
+                            &nbsp;
+                            <a href="@Url.Action("Index", "Category")" class="btn btn-default btn-lg">
+                                <i class="fa fa-arrow-left"></i> Quay lại
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <!-- Sử dụng thư viện có sẵn trong project, không dùng link CDN online -->
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+}

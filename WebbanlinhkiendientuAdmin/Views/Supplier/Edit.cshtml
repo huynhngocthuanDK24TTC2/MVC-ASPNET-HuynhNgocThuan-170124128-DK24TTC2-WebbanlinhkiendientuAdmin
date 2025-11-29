@@ -1,0 +1,113 @@
+﻿@model WebbanlinhkiendientuAdmin.Models.Supplier
+
+@{
+    ViewBag.Title = "Chỉnh sửa nhà cung cấp";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- TIÊU ĐỀ TRANG -->
+<div class="row">
+    <div class="col-lg-12">
+        <h3 class="page-header" style="color: #f0ad4e; border-bottom: 2px solid #ddd; margin-top: 20px;">
+            <i class="fa fa-pencil-square-o"></i> Cập Nhật Nhà Cung Cấp
+        </h3>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <!-- PANEL MÀU VÀNG (WARNING) CHO TRANG EDIT -->
+        <div class="panel panel-warning" style="box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <div class="panel-heading">
+                <h3 class="panel-title">Thông tin chi tiết</h3>
+            </div>
+            <div class="panel-body" style="padding: 30px;">
+
+                @using (Html.BeginForm("Edit", "Supplier", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(x => x.SupplierID)
+
+                    <div class="row">
+                        <!-- CỘT TRÁI -->
+                        <div class="col-md-6">
+                            <!-- Tên công ty -->
+                            <div class="form-group">
+                                <label class="control-label">Tên công ty <span class="text-danger">*</span></label>
+                                @Html.TextBoxFor(x => x.CompanyName, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(x => x.CompanyName, "", new { @class = "text-danger" })
+                            </div>
+
+                            <!-- Người liên hệ -->
+                            <div class="form-group">
+                                <label class="control-label">Người liên hệ</label>
+                                @Html.TextBoxFor(x => x.ContactName, new { @class = "form-control" })
+                            </div>
+
+                            <!-- Trạng thái  -->
+                            <div class="form-group">
+                                <label class="control-label">Trạng thái</label>
+                                <div class="checkbox">
+                                    <label>
+                                        <!-- Xử lý checkbox cho Nullable Bool an toàn -->
+                                        <input type="checkbox" name="isActive" value="true" @(Model.isActive.GetValueOrDefault() ? "checked" : "") />
+                                        <input type="hidden" name="isActive" value="false" />
+
+                                        <strong>Đang hợp tác (Active)</strong>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CỘT PHẢI -->
+                        <div class="col-md-6">
+                            <!-- Số điện thoại -->
+                            <div class="form-group">
+                                <label class="control-label">Số điện thoại <span class="text-danger">*</span></label>
+                                @Html.TextBoxFor(x => x.Phone, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(x => x.Phone, "", new { @class = "text-danger" })
+                            </div>
+
+                            <!-- Email -->
+                            <div class="form-group">
+                                <label class="control-label">Email liên hệ</label>
+                                @Html.TextBoxFor(x => x.Email, new { @class = "form-control", type = "email" })
+                                @Html.ValidationMessageFor(x => x.Email, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ĐỊA CHỈ (FULL WIDTH) -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">Địa chỉ kho / Văn phòng</label>
+                                @Html.TextAreaFor(x => x.Address, new { @class = "form-control", rows = 2 })
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <!-- NÚT BẤM -->
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <button type="submit" class="btn btn-warning btn-lg">
+                                <i class="fa fa-save"></i> Lưu Thay Đổi
+                            </button>
+                            &nbsp;
+                            <a href="@Url.Action("Index", "Supplier")" class="btn btn-default btn-lg">
+                                <i class="fa fa-arrow-left"></i> Quay lại
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+}

@@ -1,0 +1,190 @@
+﻿@model WebbanlinhkiendientuAdmin.Models.Customer
+
+@{
+    ViewBag.Title = "Hồ sơ của tôi";
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+
+<!-- CSS TÙY CHỈNH -->
+<style>
+    .profile-sidebar {
+        border: 1px solid #eee;
+        padding: 20px;
+        text-align: center;
+        background: #fff;
+    }
+
+    .profile-content {
+        border: 1px solid #eee;
+        padding: 30px;
+        background: #fff;
+        min-height: 400px;
+    }
+
+    .img-avatar {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid #eee;
+        margin-bottom: 15px;
+    }
+
+    .nav-pills > li.active > a {
+        background-color: #d31e1e;
+    }
+
+    .btn-save {
+        background-color: #d31e1e;
+        color: #fff;
+        border: none;
+        padding: 10px 30px;
+        font-weight: bold;
+    }
+
+        .btn-save:hover {
+            background-color: #333;
+            color: #fff;
+        }
+</style>
+
+<section id="aa-myaccount">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="aa-myaccount-area" style="padding: 50px 0;">
+
+                    <!-- enctype="multipart/form-data" để gửi được ảnh -->
+                    @using (Html.BeginForm("UpdateProfile", "Account", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(m => m.CustomerID)
+
+                        <div class="row">
+                            <!-- CỘT TRÁI: AVATAR & MENU -->
+                            <div class="col-md-3">
+                                <div class="profile-sidebar">
+                                    <!-- 1. Hiển thị ảnh hiện tại -->
+                                    <img id="previewAvatar"
+                                         src="@Url.Content(!string.IsNullOrEmpty(Model.PicturePath) ? Model.PicturePath : "~/Images/UserAvatar/no-image.jpg")"
+                                         alt="Avatar" class="img-avatar">
+
+                                    <h4 style="font-weight: bold;">@Model.Last_Name @Model.First_Name</h4>
+                                    <p class="text-muted">@Model.UserName</p>
+
+                                    <!-- 2. Nút chọn ảnh mới -->
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label for="fileUpload" class="btn btn-default btn-sm btn-block">
+                                            <i class="fa fa-camera"></i> Đổi ảnh đại diện
+                                        </label>
+                                        <!-- Input file bị ẩn, click vào label sẽ kích hoạt nó -->
+                                        <input type="file" id="fileUpload" name="Picture" accept="image/*" style="display:none;" onchange="previewImage(this)" />
+                                    </div>
+
+                                    <hr />
+                                    <ul class="nav nav-pills nav-stacked text-left">
+                                        <li class="active"><a href="#"><i class="fa fa-user"></i> Thông tin tài khoản</a></li>
+                                        <li><a href="@Url.Action("Index", "MyCart")"><i class="fa fa-shopping-cart"></i> Giỏ hàng</a></li>
+                                        <li><a href="@Url.Action("Index", "WishList")"><i class="fa fa-heart"></i> Yêu thích</a></li>
+                                        <li><a href="@Url.Action("Logout", "Account")" class="text-danger"><i class="fa fa-sign-out"></i> Đăng xuất</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- CỘT PHẢI: FORM THÔNG TIN -->
+                            <div class="col-md-9">
+                                <div class="profile-content">
+                                    <h3 style="margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 10px;">Cập nhật thông tin</h3>
+
+                                    <!-- Thông báo -->
+                                    @if (TempData["Success"] != null)
+                                    {
+                                        <div class="alert alert-success"><i class="fa fa-check"></i> @TempData["Success"]</div>
+                                    }
+                                    @if (TempData["Error"] != null)
+                                    {
+                                        <div class="alert alert-danger"><i class="fa fa-warning"></i> @TempData["Error"]</div>
+                                    }
+
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">Họ & Tên đệm</label>
+                                        <div class="col-md-9">
+                                            @Html.TextBoxFor(m => m.First_Name, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">Tên</label>
+                                        <div class="col-md-9">
+                                            @Html.TextBoxFor(m => m.Last_Name, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">Email</label>
+                                        <div class="col-md-9">
+                                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">Số điện thoại</label>
+                                        <div class="col-md-9">
+                                            @Html.TextBoxFor(m => m.Phone, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">Ngày sinh</label>
+                                        <div class="col-md-9">
+                                            @Html.TextBoxFor(m => m.DateofBirth, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">Giới tính</label>
+                                        <div class="col-md-9">
+                                            @Html.DropDownList("Gender", new List<SelectListItem>{
+                                                new SelectListItem{ Text="Nam", Value="Nam" },
+                                                new SelectListItem{ Text="Nữ", Value="Nữ" },
+                                                new SelectListItem{ Text="Khác", Value="Khác" }
+                                            }, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">Địa chỉ</label>
+                                        <div class="col-md-9">
+                                            @Html.TextAreaFor(m => m.Address, new { @class = "form-control", rows = 3 })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-md-offset-3 col-md-9">
+                                            <button type="submit" class="btn btn-save">LƯU THAY ĐỔI</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section scripts {
+    <script>
+        // Script xem trước ảnh khi chọn
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#previewAvatar').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+}

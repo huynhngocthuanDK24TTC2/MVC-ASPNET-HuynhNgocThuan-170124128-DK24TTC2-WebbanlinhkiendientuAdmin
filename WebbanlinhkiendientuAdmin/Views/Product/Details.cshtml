@@ -1,0 +1,96 @@
+﻿@model WebbanlinhkiendientuAdmin.Models.Product
+@{
+    ViewBag.Title = "Chi tiết sản phẩm: " + (Model?.Name ?? "Không tìm thấy");
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (Model == null)
+{
+    <div class="alert alert-danger">
+        <i class="fa fa-exclamation-triangle"></i> Sản phẩm không tồn tại hoặc đã bị xóa.
+        <a href="@Url.Action("Index", "Product")" class="alert-link">Quay lại danh sách</a>
+    </div>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="page-header text-info">
+                <i class="fa fa-info-circle"></i> Chi tiết sản phẩm
+            </h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Thông tin: <strong>@Model.Name</strong></h3>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <!-- Cột bên trái: Hình ảnh -->
+                        <div class="col-md-4 text-center">
+                            <div class="thumbnail" style="border: none;">
+                                @{
+                                    // Logic xử lý ảnh tách biệt cho gọn view
+                                    var imgSrc = !string.IsNullOrEmpty(Model.PicturePath)
+                                                 ? Url.Content(Model.PicturePath)
+                                                 : "https://via.placeholder.com/300x300?text=No+Image";
+                                }
+                                <img src="@imgSrc" alt="@Model.Name" class="img-responsive img-rounded"
+                                     style="width: 100%; max-width: 300px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                            </div>
+                        </div>
+
+                        <!-- Cột bên phải: Thông tin chi tiết -->
+                        <div class="col-md-8">
+                            <h3 class="text-primary" style="margin-top: 0;">@Model.Name</h3>
+                            <p class="text-muted">Mã SP: <strong>#@Model.ProductID</strong></p>
+                            <hr />
+
+                            <form class="form-horizontal">
+                                
+                                @HelperRow("Giá bán:", string.Format("{0:N0} đ", Model.UnitPrice), "text-danger", "font-size: 18px; font-weight: bold;")
+
+                                @HelperRow("Giá niêm yết:",
+                                    (Model.OldPrice.HasValue ? string.Format("{0:N0} đ", Model.OldPrice) : "---"),
+                                    "text-muted", "text-decoration: line-through;")
+
+                                
+                                @HelperRow("Nhà cung cấp:", Model.Supplier?.CompanyName ?? "Chưa cập nhật")
+                                @HelperRow("Danh mục chính:", Model.Category?.Name ?? "---", "text-success font-bold")
+                                @HelperRow("Danh mục con:", Model.SubCategory?.Name ?? "Không có")
+                                @HelperRow("Tồn kho:", $"{Model.UnitInStock} sản phẩm")
+                                @HelperRow("Mô tả ngắn:", Model.ShortDescription ?? "Đang cập nhật...", "text-justify")
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer: Các nút thao tác -->
+                <div class="panel-footer text-right">
+                    <a href="@Url.Action("Index", "Product")" class="btn btn-default">
+                        <i class="fa fa-arrow-left"></i> Quay lại
+                    </a>
+                    <a href="@Url.Action("Edit", "Product", new { id = Model.ProductID })" class="btn btn-warning">
+                        <i class="fa fa-pencil"></i> Chỉnh sửa
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@helper HelperRow(string label, string value, string cssClass = "", string style = "")
+{
+    <div class="form-group" style="margin-bottom: 5px;">
+        <label class="control-label col-md-4 text-left">@label</label>
+        <div class="col-md-8">
+            <p class="form-control-static @cssClass" style="@style">
+                @value
+            </p>
+        </div>
+    </div>
+}

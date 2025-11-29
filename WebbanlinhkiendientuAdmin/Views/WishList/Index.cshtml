@@ -1,0 +1,93 @@
+﻿@model List<WebbanlinhkiendientuAdmin.Models.Wishlist>
+
+@{
+    ViewBag.Title = "Sản phẩm yêu thích";
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+
+<!-- Banner -->
+<section id="aa-catg-head-banner">
+    <div class="aa-catg-head-banner-area">
+        <div class="container">
+            <div class="aa-catg-head-banner-content">
+                <h2>Sản phẩm yêu thích</h2>
+                <ol class="breadcrumb">
+                    <li><a href="@Url.Action("Index", "Home")">Trang chủ</a></li>
+                    <li class="active">Wishlist</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="cart-view">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="cart-view-area" style="padding: 50px 0;">
+                    <div class="cart-view-table">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Bỏ</th>
+                                        <th>Ảnh</th>
+                                        <th>Sản phẩm</th>
+                                        <th>Trạng thái</th>
+                                        <th>Giá</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model != null && Model.Count > 0)
+                                    {
+                                        foreach (var item in Model)
+                                        {
+                                            <tr>
+                                                <!-- Nút Xóa -->
+                                                <td class="text-center">
+                                                    <a class="remove" href="@Url.Action("Remove", "WishList", new { id = item.WishlistID })" onclick="return confirm('Bỏ quan tâm sản phẩm này?');">
+                                                        <i class="fa fa-times-circle" style="color:red; font-size:20px;"></i>
+                                                    </a>
+                                                </td>
+                                                <!-- Ảnh -->
+                                                <td class="text-center">
+                                                    <a href="@Url.Action("Details", "PShop", new { id = item.ProductID })">
+                                                        <img src="@Url.Content(string.IsNullOrEmpty(item.Product?.PicturePath) ? "~/Images/no-image.jpg" : item.Product.PicturePath)" alt="img" style="width:60px; height:60px; object-fit:cover;">
+                                                    </a>
+                                                </td>
+                                                <!-- Tên -->
+                                                <td>
+                                                    <a class="aa-cart-title" href="@Url.Action("Details", "PShop", new { id = item.ProductID })" style="font-weight:bold; color:#333;">@item.Product.Name</a>
+                                                </td>
+                                                <!-- Trạng thái -->
+                                                <td class="text-center">
+                                                    @if (item.Product.UnitInStock > 0)
+                                                    {<span class="label label-success">Còn hàng</span> }
+                                                    else
+                                                    { <span class="label label-danger">Hết hàng</span>}
+                                                </td>
+                                                <!-- Giá -->
+                                                <td style="color:#d31e1e; font-weight:bold;">@string.Format("{0:N0} đ", item.Product.UnitPrice)</td>
+                                                <!-- Nút Mua -->
+                                                <td class="text-center">
+                                                    <a href="@Url.Action("AddToCart", "MyCart", new { id = item.ProductID })" class="aa-add-to-cart-btn">Thêm vào giỏ</a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="6" class="text-center" style="padding: 30px;">Danh sách yêu thích trống.</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

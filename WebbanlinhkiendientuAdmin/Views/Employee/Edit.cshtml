@@ -1,0 +1,118 @@
+﻿@model WebbanlinhkiendientuAdmin.Models.EmployeeVM
+@{
+    ViewBag.Title = "Cập nhật nhân viên";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-info mt-3">
+                <i class="fa-solid fa-user-pen"></i> Cập nhật thông tin nhân viên
+            </h2>
+            <hr />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Edit", "Employee", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.HiddenFor(x => x.EmpID)
+
+                <!-- Giữ lại đường dẫn ảnh cũ -->
+                @Html.HiddenFor(x => x.PicturePath)
+
+                <!-- Phần hiển thị thông tin tóm tắt và ảnh hiện tại -->
+                <div class="row mb-4 align-items-center">
+                    <div class="col-md-2 text-center">
+                        <!-- Xử lý hiển thị ảnh: Nếu null thì hiện ảnh mặc định -->
+                        <img src="@Url.Content(string.IsNullOrEmpty(Model.PicturePath) ? "~/Images/no-image.jpg" : Model.PicturePath)"
+                             alt="Avatar"
+                             class="img-thumbnail rounded-circle shadow-sm"
+                             style="width: 100px; height: 100px; object-fit: cover;" />
+                    </div>
+                    <div class="col-md-10">
+                        <h3 class="text-primary m-0">@Model.FirstName @Model.LastName</h3>
+                        <p class="text-muted">@Model.Email</p>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <!-- Tên -->
+                    <div class="col-md-6 mb-3">
+                        @Html.LabelFor(x => x.FirstName, new { @class = "form-label fw-bold" })
+                        @Html.TextBoxFor(x => x.FirstName, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(x => x.FirstName, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <!-- Họ -->
+                    <div class="col-md-6 mb-3">
+                        @Html.LabelFor(x => x.LastName, new { @class = "form-label fw-bold" })
+                        @Html.TextBoxFor(x => x.LastName, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(x => x.LastName, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <!-- Ngày sinh -->
+                    <div class="col-md-6 mb-3">
+                        @Html.LabelFor(x => x.DateofBirth, new { @class = "form-label fw-bold" })
+                        <!-- Định dạng ngày chuẩn để hiện lên input date -->
+                        @Html.TextBoxFor(x => x.DateofBirth, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+                        @Html.ValidationMessageFor(x => x.DateofBirth, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <!-- Giới tính -->
+                    <div class="col-md-6 mb-3">
+                        @Html.LabelFor(x => x.Gender, new { @class = "form-label fw-bold" })
+                        @Html.DropDownList("Gender", new List<SelectListItem>() {
+                                            new SelectListItem(){Text="Nam", Value="Male"},
+                                            new SelectListItem(){Text="Nữ", Value="Female"},
+                                            new SelectListItem(){Text="Khác", Value="Other"}
+                            }, "-- Chọn giới tính --", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(x => x.Gender, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <!-- Email -->
+                    <div class="col-md-6 mb-3">
+                        @Html.LabelFor(x => x.Email, new { @class = "form-label fw-bold" })
+                        @Html.TextBoxFor(x => x.Email, new { @class = "form-control", type = "email" })
+                        @Html.ValidationMessageFor(x => x.Email, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <!-- Số điện thoại -->
+                    <div class="col-md-6 mb-3">
+                        @Html.LabelFor(x => x.Phone, new { @class = "form-label fw-bold" })
+                        @Html.TextBoxFor(x => x.Phone, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(x => x.Phone, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <!-- Ảnh đại diện (Upload mới) -->
+                    <div class="col-md-6 mb-3">
+                        @Html.LabelFor(x => x.Picture, new { @class = "form-label fw-bold" })
+                        <input type="file" name="Picture" class="form-control" accept="image/*" />
+                        @Html.ValidationMessageFor(x => x.Picture, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <!-- Địa chỉ -->
+                    <div class="col-md-12 mb-3">
+                        @Html.LabelFor(x => x.Address, new { @class = "form-label fw-bold" })
+                        @Html.TextAreaFor(x => x.Address, new { @class = "form-control", rows = 2 })
+                        @Html.ValidationMessageFor(x => x.Address, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <!-- Nút bấm -->
+                    <div class="col-12 mt-3">
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success btn-lg px-5">
+                                <i class="fa-solid fa-floppy-disk"></i> Lưu thay đổi
+                            </button>
+                            <a href="@Url.Action("Index", "Employee")" class="btn btn-secondary btn-lg">
+                                <i class="fa-solid fa-arrow-left"></i> Quay lại
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

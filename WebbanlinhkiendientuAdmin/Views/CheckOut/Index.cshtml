@@ -1,0 +1,130 @@
+﻿@using WebbanlinhkiendientuAdmin.Models
+
+@model List<OrderDetail>
+
+@{
+    ViewBag.Title = "Thanh toán đơn hàng";
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+
+    //  Lấy thông tin khách hàng từ ViewBag (đã truyền từ Controller)
+    var user = ViewBag.Customer as Customer;
+
+    // Tính tổng tiền
+    decimal grandTotal = 0;
+    if (Model != null)
+    {
+        grandTotal = Model.Sum(x => (x.UnitPrice ?? 0) * (x.Quantity ?? 0));
+    }
+}
+
+<section id="checkout">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="checkout-area">
+
+                    <!-- FORM ĐẶT HÀNG -->
+                    @using (Html.BeginForm("PlaceOrder", "CheckOut", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="row">
+                            <!-- CỘT TRÁI: THÔNG TIN GIAO HÀNG -->
+                            <div class="col-md-8">
+                                <div class="checkout-left">
+                                    <div class="panel-group">
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title"><i class="fa fa-user"></i> Thông tin nhận hàng</h4>
+                                            </div>
+                                            <div class="panel-body">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>Họ tên người nhận <span class="text-danger">*</span></label>
+                                                            <!-- Hiển thị tên lấy từ user, nhưng không cần gửi về server (chỉ hiển thị) -->
+                                                            <input type="text" class="form-control" value="@(user != null ? user.First_Name + " " + user.Last_Name : "")" readonly style="background-color:#eee;">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>Số điện thoại <span class="text-danger">*</span></label>
+                                                            <input type="text" class="form-control" value="@(user != null ? user.Phone : "")" readonly style="background-color:#eee;">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Địa chỉ giao hàng <span class="text-danger">*</span></label>
+                                                    <textarea name="ShippingAddress" class="form-control" rows="3" required placeholder="Số nhà, tên đường, phường/xã...">@(user != null ? user.Address : "")</textarea>
+                                                    <small class="text-muted">Bạn có thể sửa lại địa chỉ này nếu muốn giao nơi khác.</small>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Ghi chú đơn hàng (Tùy chọn)</label>
+                                                    <textarea name="Notes" class="form-control" rows="2" placeholder="Ví dụ: Giao giờ hành chính, gọi trước khi giao..."></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- CỘT PHẢI: TÓM TẮT ĐƠN HÀNG -->
+                            <div class="col-md-4">
+                                <div class="checkout-right">
+                                    <h4>Tóm tắt đơn hàng</h4>
+                                    <div class="aa-order-summary-area">
+                                        <table class="table table-responsive">
+                                            <thead>
+                                                <tr>
+                                                    <th>Sản phẩm</th>
+                                                    <th>Tổng</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (Model != null)
+                                                {
+                                                    foreach (var item in Model)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                @item.Product.Name <strong style="color:#d31e1e;">x @item.Quantity</strong>
+                                                            </td>
+                                                            <td>@string.Format("{0:N0} đ", item.UnitPrice * item.Quantity)</td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <th>Tổng tiền hàng</th>
+                                                    <td>@string.Format("{0:N0} đ", grandTotal)</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Phí vận chuyển</th>
+                                                    <td>0 đ</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Tổng thanh toán</th>
+                                                    <td><strong style="color:#d31e1e; font-size:18px;">@string.Format("{0:N0} đ", grandTotal)</strong></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+
+                                        <div class="aa-payment-method">
+                                            <label for="cashdelivery"><input type="radio" id="cashdelivery" name="paymentMethod" checked> Thanh toán khi nhận hàng (COD)</label>
+                                            <label for="paypal"><input type="radio" id="paypal" name="paymentMethod" disabled> Thanh toán Online (Đang bảo trì)</label>
+
+                                            <input type="submit" value="ĐẶT HÀNG NGAY" class="aa-browse-btn" style="background-color:#d31e1e; color:white; font-weight:bold; border:none;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

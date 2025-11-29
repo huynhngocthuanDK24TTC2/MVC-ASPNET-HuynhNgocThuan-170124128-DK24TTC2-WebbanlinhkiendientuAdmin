@@ -1,0 +1,120 @@
+﻿@using PagedList
+@using PagedList.Mvc @* Lỗi đã được sửa bằng cách cài lại thư viện ở Bước 1 *@
+@model IPagedList<WebbanlinhkiendientuAdmin.Models.Product>
+
+@{
+    ViewBag.Title = "Sản phẩm";
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+
+<style>
+    /* Style cho phân trang */
+    .pagination > .active > a,
+    .pagination > .active > a:hover {
+        color: #fff !important;
+        background-color: #d31e1e !important;
+        border-color: #d31e1e !important;
+    }
+
+    .pagination > li > a {
+        color: #d31e1e !important;
+    }
+</style>
+
+<!-- ========================= BANNER DANH MỤC ========================= -->
+@if (!string.IsNullOrEmpty(ViewBag.CategoryName as string) || !string.IsNullOrEmpty(ViewBag.SearchTerm as string))
+{
+    <section id="aa-catg-head-banner">
+        <img src="~/Content/img/fashion/fashion-header-bg-8.jpg" alt="banner ảnh">
+        <div class="aa-catg-head-banner-area">
+            <div class="container">
+                <div class="aa-catg-head-banner-content">
+                    @if (!string.IsNullOrEmpty(ViewBag.SearchTerm as string))
+                    {
+                        <h2>Kết quả tìm kiếm cho "@ViewBag.SearchTerm"</h2>
+                    }
+                    else
+                    {
+                        <h2>@ViewBag.CategoryName</h2>
+                    }
+                    <ol class="breadcrumb">
+                        <li><a href="@Url.Action("Index", "Home")">Trang chủ</a></li>
+                        <li class="active">Sản phẩm</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+<!-- ========================= KẾT THÚC BANNER ========================= -->
+
+<section id="aa-product-category">
+    <div class="container">
+        <div class="row">
+            <!-- Phần nội dung chính -->
+            <div class="col-lg-9 col-md-9 col-sm-8 col-md-push-3">
+                <div class="aa-product-catg-content">
+                    <div class="aa-product-catg-head">
+                        <div class="aa-product-catg-head-left">
+                            @using (Html.BeginForm("Search", "Product1", FormMethod.Get))
+                            {
+                                <label for="sortBy">Sắp xếp theo</label>
+                                <select name="sortBy" onchange="this.form.submit()">
+                                    <option value="Default" selected>Mặc định</option>
+                                    <option value="Name">Tên</option>
+                                    <option value="PriceAsc">Giá tăng dần</option>
+                                    <option value="PriceDesc">Giá giảm dần</option>
+                                </select>
+                                <input type="hidden" name="product" value="@ViewBag.SearchTerm" />
+                            }
+                        </div>
+                        <div class="aa-product-catg-head-right">
+                            <a id="grid-catg" href="#"><span class="fa fa-th"></span></a>
+                        </div>
+                    </div>
+                    <div class="aa-product-catg-body">
+                        <ul class="aa-product-catg">
+                            @if (Model != null && Model.Any())
+                            {
+                                foreach (var item in Model)
+                                {
+                                    Html.RenderPartial("_Product", item);
+                                }
+                            }
+                            else
+                            {
+                                <!-- SỬA LỖI HTML: Bọc thẻ div trong li để hợp lệ -->
+                                <li>
+                                    <div class="alert alert-warning text-center" style="margin: 20px; width: 100%;">
+                                        <h4><i class="fa fa-info-circle"></i> Xin lỗi! Không tìm thấy sản phẩm nào phù hợp.</h4>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                    <!-- Thanh phân trang -->
+                    <div class="aa-product-catg-pagination">
+                        <nav>
+                            @Html.PagedListPager(
+                                Model,
+                                page => Url.Action("Index", new { page, sortBy = Request.QueryString["sortBy"], product = ViewBag.SearchTerm }),
+                                PagedListRenderOptions.ClassicPlusFirstAndLast
+                            )
+                        </nav>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-3 col-md-3 col-sm-4 col-md-pull-9">
+                <aside class="aa-sidebar">
+                    @* ... Nội dung sidebar giữ nguyên ... *@
+                </aside>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section scripts {
+    @* ... Nội dung script giữ nguyên ... *@
+}

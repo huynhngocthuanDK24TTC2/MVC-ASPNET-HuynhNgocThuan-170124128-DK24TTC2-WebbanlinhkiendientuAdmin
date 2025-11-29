@@ -1,0 +1,111 @@
+﻿@model IEnumerable<WebbanlinhkiendientuAdmin.Models.admin_Employee>
+@{
+    ViewBag.Title = "Danh sách nhân viên";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-info mt-3">
+                <i class="fa-solid fa-user-tie"></i> Danh sách nhân viên
+            </h2>
+            <hr />
+
+            <!-- 1. Hiển thị thông báo thành công -->
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fa-solid fa-check-circle me-2"></i> @TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <!-- Nút thêm mới -->
+            <div class="d-flex justify-content-end mb-3">
+                <a href="@Url.Action("Create", "Employee")" class="btn btn-primary">
+                    <i class="fa-solid fa-plus"></i> Thêm nhân viên mới
+                </a>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped table-bordered mb-0 align-middle">
+                            <thead class="table-primary text-center">
+                                <tr>
+                                    <th>Họ và Tên</th> <!-- Gộp cột tên -->
+                                    <th>@Html.DisplayNameFor(e => e.DateofBirth)</th>
+                                    <th>@Html.DisplayNameFor(e => e.Gender)</th>
+                                    <th>@Html.DisplayNameFor(e => e.Email)</th>
+                                    <th>@Html.DisplayNameFor(e => e.Phone)</th>
+                                    <th style="width: 150px;">Tác vụ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    foreach (var emp in Model)
+                                    {
+                                        <tr>
+                                            <td class="fw-bold">
+                                                <!-- 2. Hiển thị ảnh đại diện + Tên -->
+                                                <div class="d-flex align-items-center">
+                                                    <img src="@Url.Content(string.IsNullOrEmpty(emp.PicturePath) ? "~/Images/no-image.jpg" : emp.PicturePath)"
+                                                         alt="Avatar"
+                                                         class="rounded-circle me-2 border"
+                                                         width="40" height="40" style="object-fit: cover;">
+                                                    <span>@emp.FirstName @emp.LastName</span>
+                                                </div>
+                                            </td>
+
+                                            <!-- 3. Định dạng ngày tháng Việt Nam -->
+                                            <td class="text-center">
+                                                @(emp.DateofBirth.HasValue ? emp.DateofBirth.Value.ToString("dd/MM/yyyy") : "")
+                                            </td>
+
+                                            <!-- 4. Giới tính -->
+                                            <td class="text-center">
+                                                @if (emp.Gender == "Male")
+                                                {<span>Nam</span> }
+                                                else if (emp.Gender == "Female")
+                                                { <span>Nữ</span> }
+                                                else
+                                                { <span>@emp.Gender</span>}
+                                            </td>
+
+                                            <td>@Html.DisplayFor(e => emp.Email)</td>
+                                            <td>@Html.DisplayFor(e => emp.Phone)</td>
+
+                                            <td class="text-center">
+                                                <div class="btn-group" role="group">
+                                                    <a href="@Url.Action("Edit", "Employee", new {id = emp.EmpID })" class="btn btn-outline-warning btn-sm" title="Sửa">
+                                                        <i class="fa-solid fa-pen"></i>
+                                                    </a>
+                                                    <a href="@Url.Action("Info", "Employee", new {id = emp.EmpID })" class="btn btn-outline-info btn-sm" title="Chi tiết">
+                                                        <i class="fa-solid fa-circle-info"></i>
+                                                    </a>
+                                                    <a href="@Url.Action("Delete", "Employee", new {id = emp.EmpID })" class="btn btn-outline-danger btn-sm" title="Xóa">
+                                                        <i class="fa-solid fa-trash"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted py-3">
+                                            Chưa có dữ liệu nhân viên.
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

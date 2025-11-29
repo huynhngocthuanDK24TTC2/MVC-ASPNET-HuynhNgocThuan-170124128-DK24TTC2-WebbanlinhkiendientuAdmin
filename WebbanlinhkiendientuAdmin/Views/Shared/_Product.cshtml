@@ -1,0 +1,100 @@
+﻿@model WebbanlinhkiendientuAdmin.Models.Product
+
+<li class="col-md-3 col-sm-4 col-xs-6 product-wrapper">
+    <div class="product-card">
+
+        <!-- 1. ẢNH SẢN PHẨM -->
+        <div class="product-img-wrap">
+            <a href="@Url.Action("Details", "PShop", new { id = Model.ProductID })">
+                <img src="@Url.Content(string.IsNullOrEmpty(Model.PicturePath) ? "~/Images/no-image.jpg" : Model.PicturePath)"
+                     alt="@Model.Name">
+            </a>
+        </div>
+
+        <!-- 2. TEM NHÃN (GIẢM GIÁ HOẶC MỚI) -->
+        @if (Model.OldPrice > Model.UnitPrice)
+        {
+            var percent = (int)Math.Round((decimal)((Model.OldPrice - Model.UnitPrice) / Model.OldPrice * 100));
+            if (percent > 0)
+            {
+                <span class="pro-badge">-@percent%</span>
+            }
+        }
+        else if (Model.UnitInStock > 0)
+        {
+            <span class="pro-badge" style="background-color: #288ad6;">MỚI</span>
+        }
+
+        <!-- 3. TOOLTIP HỘP ĐEN (HIỆN ĐÈ LÊN ẢNH KHI HOVER) -->
+        <div class="product-hover-specs">
+            <div>
+                <h4><i class="fa fa-cogs"></i> Thông số kỹ thuật:</h4>
+                <ul>
+                    @if (!string.IsNullOrEmpty(Model.ShortDescription))
+                    {
+                        // Tách dòng thông minh, lấy 5 dòng đầu
+                        var specs = Model.ShortDescription.Split(new[] { '\n', '.', ',' }, StringSplitOptions.RemoveEmptyEntries);
+                        foreach (var line in specs.Take(5))
+                        {
+                            <li>@line.Trim()</li>
+                        }
+                    }
+                    else
+                    {
+                        <li>Sản phẩm chính hãng</li>
+                        <li>Bảo hành dài hạn</li>
+                        <li>Giá tốt nhất thị trường</li>
+                    }
+                </ul>
+            </div>
+
+            <!-- Nút Xem chi tiết ngay trong hộp đen (Tiện lợi) -->
+            <div class="specs-btn-action" style="margin-top: auto; text-align: center; width: 100%;">
+                <a href="@Url.Action("Details", "PShop", new { id = Model.ProductID })" class="btn btn-xs btn-danger" style="width: 100%; border-radius: 0;">XEM CHI TIẾT</a>
+            </div>
+        </div>
+
+        <!-- 4. THANH TÁC VỤ (3 NÚT: XEM - YÊU THÍCH - MUA) -->
+        <div class="product-action-bar">
+            <!-- Xem -->
+            <a href="@Url.Action("Details", "PShop", new { id = Model.ProductID })" title="Xem chi tiết">
+                <i class="fa fa-eye"></i>
+            </a>
+
+            <!-- Yêu thích (Wishlist) -->
+            <a href="@Url.Action("AddItem", "WishList", new { id = Model.ProductID })" title="Yêu thích" style="color: #d31e1e;">
+                <i class="fa fa-heart-o"></i>
+            </a>
+
+            <!-- Mua hàng -->
+            <a href="@Url.Action("AddToCart", "MyCart", new { id = Model.ProductID })" title="Thêm vào giỏ">
+                <i class="fa fa-shopping-cart"></i>
+            </a>
+        </div>
+
+        <!-- 5. THÔNG TIN SẢN PHẨM -->
+        <div class="product-info">
+            <h3 class="product-name">
+                <a href="@Url.Action("Details", "PShop", new { id = Model.ProductID })" title="@Model.Name">@Model.Name</a>
+            </h3>
+
+            <!-- Giá tiền -->
+            <div class="pro-price-box">
+                <div class="label-cheaper">Rẻ hơn</div>
+                <div class="pro-price-current">@String.Format("{0:N0} đ", Model.UnitPrice)</div>
+
+                <div class="price-old-container">
+                    @if (Model.OldPrice > Model.UnitPrice)
+                    {
+                        <span class="pro-price-old">@String.Format("{0:N0} đ", Model.OldPrice)</span>
+                    }
+                    else
+                    {
+                        <span style="height: 18px; display:block;">&nbsp;</span>
+                    }
+                </div>
+            </div>
+        </div>
+
+    </div>
+</li>

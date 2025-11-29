@@ -1,0 +1,194 @@
+﻿@model WebbanlinhkiendientuAdmin.Models.Product
+
+@{
+    ViewBag.Title = Model.Name; // Tên sản phẩm sẽ là tiêu đề trang
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+
+
+<!-- ========================= NỘI DUNG TRANG CHI TIẾT SẢN PHẨM ========================= -->
+<section id="aa-product-details">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="aa-product-details-area">
+                    <div class="aa-product-details-content">
+                        <div class="row">
+                            <!-- Phần hình ảnh sản phẩm -->
+                            <div class="col-md-5 col-sm-5 col-xs-12">
+                                <div class="aa-product-view-slider">
+                                    <div id="demo-1" class="simpleLens-gallery-container">
+                                        <div class="simpleLens-container">
+                                            <div class="simpleLens-big-image-container">
+                                                <a data-lens-image="@Url.Content(Model.PicturePath)" class="simpleLens-lens-image">
+                                                    <img src="@Url.Content(Model.PicturePath)" class="simpleLens-big-image" alt="@Model.Name">
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Phần thông tin sản phẩm -->
+                            <div class="col-md-7 col-sm-7 col-xs-12">
+                                <div class="aa-product-view-content">
+                                    <h3>@Model.Name</h3>
+                                    <div class="aa-product-rating">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            if (ViewBag.AvgRate >= i)
+                                            {<span class="fa fa-star" style="color: #ffc107"></span> }
+                                            else
+                                            { <span class="fa fa-star-o" style="color: #ffc107"></span>}
+                                        }
+                                        <span class="aa-review-count">(@ViewBag.TotalReviews đánh giá)</span>
+                                    </div>
+
+                                    <div class="aa-price-block">
+                                        <span class="aa-product-view-price">@string.Format("{0:N0} đ", Model.UnitPrice)</span>
+                                        @if (Model.UnitInStock > 0)
+                                        {
+                                            <p class="aa-product-avilability">
+                                                <span style="color:white; background-color:green; padding: 2px 8px; border-radius: 4px;">Còn hàng (@Model.UnitInStock)</span>
+                                            </p>
+                                        }
+                                        else
+                                        {
+                                            <p class="aa-product-avilability">
+                                                <span style="color:white; background-color:red; padding: 2px 8px; border-radius: 4px;">Hết hàng</span>
+                                            </p>
+                                        }
+                                    </div>
+                                    <p>@Html.Raw(Model.ShortDescription)</p>
+
+                                    
+                                    @using (Html.BeginForm("AddToCart", "Product1", FormMethod.Get))
+                                    {
+                                        <div class="aa-prod-quantity">
+                                            <label for="quantity"><strong>Số lượng:</strong></label>
+                                            <input type="number" id="quantity" name="quantity" min="1" max="@(Model.UnitInStock > 0 ? Model.UnitInStock : 1)" value="1" />
+                                            <input type="hidden" name="id" value="@Model.ProductID" />
+                                        </div>
+
+                                        <div class="aa-prod-view-bottom">
+                                            @if (Model.UnitInStock > 0)
+                                            {
+                                                <button type="submit" class="aa-add-to-cart-btn">Thêm vào giỏ hàng</button>
+                                            }
+                                            else
+                                            {
+                                                <button type="button" class="aa-add-to-cart-btn" disabled style="background-color: #ccc; cursor: not-allowed;">Hết hàng</button>
+                                            }
+                                            <a class="aa-add-to-cart-btn" href="@Url.Action("WishList", "Product1", new { id = Model.ProductID })">Thêm vào yêu thích</a>
+                                        </div>
+                                    }
+                                    <!-- Hiển thị thông báo thành công/lỗi -->
+                                    @if (TempData["SuccessMessage"] != null)
+                                    {<div class="alert alert-success mt-3">@TempData["SuccessMessage"]</div>}
+                                    @if (TempData["ErrorMessage"] != null)
+                                    {<div class="alert alert-danger mt-3">@TempData["ErrorMessage"]</div>}
+                                    @if (TempData["InfoMessage"] != null)
+                                    {<div class="alert alert-info mt-3">@TempData["InfoMessage"]</div>}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Phần mô tả chi tiết và đánh giá -->
+                    <div class="aa-product-details-bottom">
+                        <ul class="nav nav-tabs" id="myTab2">
+                            <li class="active"><a href="#description" data-toggle="tab">Mô tả chi tiết</a></li>
+                            <li><a href="#review" data-toggle="tab">Đánh giá (@ViewBag.TotalReviews)</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                            <div class="tab-pane fade in active" id="description">
+                                @Html.Raw(Model.LongDescription)
+                            </div>
+                            <div class="tab-pane fade" id="review">
+                                <div class="aa-product-review-area">
+                                    <h4>@ViewBag.TotalReviews đánh giá cho sản phẩm "@Model.Name"</h4>
+                                    <ul class="aa-review-nav">
+                                        @if (ViewBag.Reviews != null && ((List<WebbanlinhkiendientuAdmin.Models.Review>)ViewBag.Reviews).Any())
+                                        {
+                                            foreach (var item in (List<WebbanlinhkiendientuAdmin.Models.Review>)ViewBag.Reviews)
+                                            {
+                                                <li>
+                                                    <div class="media">
+                                                        <div class="media-body">
+                                                            <h4 class="media-heading"><strong>@item.Name</strong> - <span>@item.DateTime.ToString("dd/MM/yyyy")</span></h4>
+                                                            <div class="aa-product-rating">
+                                                                @for (int i = 1; i <= item.Rate; i++)
+                                                                {<span class="fa fa-star"></span>}
+                                                                @for (int i = (item.Rate ?? 0) + 1; i <= 5; i++)
+                                                                {<span class="fa fa-star-o"></span>}
+                                                            </div>
+                                                            <p>@item.Review1</p>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <li>Chưa có đánh giá nào cho sản phẩm này.</li>
+                                        }
+                                    </ul>
+                                    <h4>Thêm đánh giá của bạn</h4>
+                                    @if (Session["username"] != null)
+                                    {
+                                        using (Html.BeginForm("AddReview", "Product1", FormMethod.Post, new { @class = "aa-review-form" }))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            @Html.Hidden("productID", Model.ProductID)
+                                            <div class="form-group">
+                                                <label>Đánh giá của bạn</label>
+                                                <p class="ratings">
+                                                    <span><input type="radio" name="rate" id="rate-5" value="5"><label for="rate-5" class="fa fa-star"></label></span>
+                                                    <span><input type="radio" name="rate" id="rate-4" value="4"><label for="rate-4" class="fa fa-star"></label></span>
+                                                    <span><input type="radio" name="rate" id="rate-3" value="3"><label for="rate-3" class="fa fa-star"></label></span>
+                                                    <span><input type="radio" name="rate" id="rate-2" value="2"><label for="rate-2" class="fa fa-star"></label></span>
+                                                    <span><input type="radio" name="rate" id="rate-1" value="1" checked><label for="rate-1" class="fa fa-star"></label></span>
+                                                </p>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="message">Nội dung đánh giá *</label>
+                                                <textarea class="form-control" rows="3" name="message" required></textarea>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="name">Tên *</label>
+                                                <input type="text" class="form-control" name="name" placeholder="Tên của bạn" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="email">Email *</label>
+                                                <input type="email" class="form-control" name="email" placeholder="Email của bạn" required>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary aa-review-submit">Gửi đánh giá</button>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <p>Vui lòng <a href="@Url.Action("Login", "Account", new { returnUrl = Request.Url.PathAndQuery })">đăng nhập</a> để viết đánh giá của bạn.</p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sản phẩm liên quan -->
+                    <div class="aa-product-related-item">
+                        <h3>Sản phẩm liên quan</h3>
+                        <ul class="aa-product-catg aa-related-item-slider">
+                            @if (ViewBag.RelatedProducts != null && ((List<WebbanlinhkiendientuAdmin.Models.Product>)ViewBag.RelatedProducts).Any())
+                            {
+                                foreach (var item in (List<WebbanlinhkiendientuAdmin.Models.Product>)ViewBag.RelatedProducts)
+                                {
+                                    Html.RenderPartial("_Product", item);
+                                }
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,252 @@
+﻿@using WebbanlinhkiendientuAdmin.Models
+@{
+    ViewBag.Title = "Trang chủ - ShopHNT Linh Kiện Điện Tử";
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+
+<style>
+    .aa-browse-btn {
+        display: inline-block; font-size: 16px; padding: 12px 18px;
+        color: #a94442; border-top: 1px solid #ddd; text-align: center;
+        width: 100%; transition: all 0.3s;
+    }
+    .aa-browse-btn:hover { background-color: #f8f9fa; color: #d31e1e; text-decoration: none; }
+    .seq-title h2, .seq-title p {
+        background: rgba(0, 0, 0, 0.6); padding: 8px 15px; display: inline-block;
+        color: #fff; border-radius: 4px;
+    }
+</style>
+
+<!-- SLIDER  -->
+@if (ViewBag.Slider != null)
+{
+    <section id="aa-slider">
+        <div class="aa-slider-area">
+            <div id="sequence" class="seq">
+                <div class="seq-screen">
+                    <ul class="seq-canvas">
+                        @foreach (var item in ViewBag.Slider)
+                        {
+                            <li>
+                                <div class="seq-model"><img data-seq src="@item.ImageURL" style="width:100%; height:500px; object-fit:cover;" /></div>
+                                <div class="seq-title">
+                                    <h2 data-seq>@item.Title</h2>
+                                    <a data-seq href="@item.BtnURL" class="aa-shop-now-btn aa-secondary-btn">Xem ngay</a>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <fieldset class="seq-nav" aria-controls="sequence" aria-label="Slider buttons">
+                    <a type="button" class="seq-prev" aria-label="Previous"><span class="fa fa-angle-left"></span></a>
+                    <a type="button" class="seq-next" aria-label="Next"><span class="fa fa-angle-right"></span></a>
+                </fieldset>
+            </div>
+        </div>
+    </section>
+}
+else
+{
+    <!-- Slider Tĩnh -->
+    <section id="aa-slider">
+        <div class="aa-slider-area">
+            <div id="sequence" class="seq">
+                <div class="seq-screen">
+                    <ul class="seq-canvas">
+                        <!-- Slide 1 -->
+                        <li>
+                            <div class="seq-model">
+                                <!-- Ảnh banner 2 -->
+                                <img data-seq src="~/Images/banner/banner2.jpg" alt="Slider 1" style="width:100%; height:500px; object-fit:cover;" />
+                            </div>
+                            <div class="seq-title">
+                                <h2 data-seq>Linh kiện PC Chính hãng</h2>
+                                <p data-seq>Nâng cấp sức mạnh - Chiến game cực đỉnh</p>
+                                <a data-seq href="@Url.Action("Index", "PShop")" class="aa-shop-now-btn aa-secondary-btn">Mua ngay</a>
+                            </div>
+                        </li>
+                         <!-- Slide 2 -->
+                        <li>
+                            <div class="seq-model">
+                                <!-- Ảnh banner 3 -->
+                                <img data-seq src="~/Images/banner/banner3.jpeg" alt="Slider 2" style="width:100%; height:500px; object-fit:cover;" />
+                            </div>
+                            <div class="seq-title">
+                                <h2 data-seq>Card màn hình Giá Tốt</h2>
+                                <p data-seq>Hiệu năng vượt trội, giá cả cạnh tranh</p>
+                                <a data-seq href="@Url.Action("Index", "PShop")" class="aa-shop-now-btn aa-secondary-btn">Xem ngay</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                 <fieldset class="seq-nav" aria-controls="sequence" aria-label="Slider buttons">
+                    <a type="button" class="seq-prev" aria-label="Previous"><span class="fa fa-angle-left"></span></a>
+                    <a type="button" class="seq-next" aria-label="Next"><span class="fa fa-angle-right"></span></a>
+                </fieldset>
+            </div>
+        </div>
+    </section>
+}
+
+<!-- ========================= SẢN PHẨM CHÍNH ========================= -->
+<section id="aa-product">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="aa-product-area">
+                        <div class="aa-product-inner">
+                            <!-- Tabs -->
+                            <ul class="nav nav-tabs aa-products-tab">
+                                <li class="active"><a href="#new" data-toggle="tab">Sản phẩm mới</a></li>
+                                <li><a href="#vga" data-toggle="tab">Card màn hình</a></li>
+                                <li><a href="#cpu" data-toggle="tab">CPU</a></li>
+                                <li><a href="#main" data-toggle="tab">Mainboard</a></li>
+                            </ul>
+
+                            <!-- Nội dung Tabs -->
+                            <div class="tab-content">
+                                <!-- 1. SẢN PHẨM MỚI -->
+                                <div class="tab-pane fade in active" id="new">
+                                    <ul class="aa-product-catg">
+                                        @if (ViewBag.NewProducts != null)
+                                        {
+                                            foreach (var item in (IEnumerable<Product>)ViewBag.NewProducts)
+                                            {
+                                                Html.RenderPartial("_Product", item);
+                                            }
+                                        }
+                                    </ul>
+                                    <a class="aa-browse-btn" href="@Url.Action("Index", "PShop", new { sortBy = "Date" })">Xem tất cả sản phẩm mới <span class="fa fa-long-arrow-right"></span></a>
+                                </div>
+
+                                <!-- 2. VGA -->
+                                <div class="tab-pane fade" id="vga">
+                                    <ul class="aa-product-catg">
+                                        @if (ViewBag.GraphicsCards != null)
+                                        {
+                                            foreach (var item in (IEnumerable<Product>)ViewBag.GraphicsCards)
+                                            {
+                                                Html.RenderPartial("_Product", item);
+                                            }
+                                        }
+                                    </ul>
+                                    <a class="aa-browse-btn" href="@Url.Action("GetProductsByCategory", "PShop", new { categoryName = "Card màn hình" })">Xem thêm VGA <span class="fa fa-long-arrow-right"></span></a>
+                                </div>
+
+                                <!-- 3. CPU -->
+                                <div class="tab-pane fade" id="cpu">
+                                    <ul class="aa-product-catg">
+                                        @if (ViewBag.CPUs != null)
+                                        {
+                                            foreach (var item in (IEnumerable<Product>)ViewBag.CPUs)
+                                            {
+                                                Html.RenderPartial("_Product", item);
+                                            }
+                                        }
+                                    </ul>
+                                    <a class="aa-browse-btn" href="@Url.Action("GetProductsByCategory", "PShop", new { categoryName = "CPU" })">Xem thêm CPU <span class="fa fa-long-arrow-right"></span></a>
+                                </div>
+
+                                <!-- 4. MAINBOARD -->
+                                <div class="tab-pane fade" id="main">
+                                    <ul class="aa-product-catg">
+                                        @if (ViewBag.Motherboards != null)
+                                        {
+                                            foreach (var item in (IEnumerable<Product>)ViewBag.Motherboards)
+                                            {
+                                                Html.RenderPartial("_Product", item);
+                                            }
+                                        }
+                                    </ul>
+                                    <a class="aa-browse-btn" href="@Url.Action("GetProductsByCategory", "PShop", new { categoryName = "Mainboard" })">Xem thêm Mainboard <span class="fa fa-long-arrow-right"></span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========================= BANNER QUẢNG CÁO ========================= -->
+<section id="aa-banner">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="aa-banner-area">
+                    
+                    <a href="#"><img src="@Url.Content("~/Images/banner/banner50.png")" alt="Banner quảng cáo" style="width:100%; height: 300px; object-fit: cover;"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========================= SẢN PHẨM PHỤ ========================= -->
+<section id="aa-popular-category">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="aa-popular-category-area">
+                        <ul class="nav nav-tabs aa-products-tab">
+                            <li class="active"><a href="#ram" data-toggle="tab">RAM</a></li>
+                            <li><a href="#deals" data-toggle="tab">Đang giảm giá</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                            <!-- 1. RAM -->
+                            <div class="tab-pane fade in active" id="ram">
+                                <ul class="aa-product-catg aa-popular-slider">
+                                    @if (ViewBag.RAMs != null)
+                                    {
+                                        foreach (var item in (IEnumerable<Product>)ViewBag.RAMs)
+                                        {
+                                            Html.RenderPartial("_Product", item);
+                                        }
+                                    }
+                                </ul>
+                                <a class="aa-browse-btn" href="@Url.Action("GetProductsByCategory", "PShop", new { categoryName = "RAM" })">Xem tất cả RAM <span class="fa fa-long-arrow-right"></span></a>
+                            </div>
+
+                            <!-- 2. GIẢM GIÁ -->
+                            <div class="tab-pane fade" id="deals">
+                                <!-- 1. SẢN PHẨM MỚI -->
+                                <div class="tab-pane fade in active" id="new">
+                                    
+                                    <ul class="aa-product-catg">
+                                        @if (ViewBag.NewProducts != null)
+                                        {
+                                            foreach (var item in (IEnumerable<WebbanlinhkiendientuAdmin.Models.Product>)ViewBag.NewProducts)
+                                            {
+                                                // Gọi Partial View để hiển thị từng ô sản phẩm
+                                                Html.RenderPartial("_Product", item);
+                                            }
+                                        }
+                                    </ul>
+                                    <!-- Nút xem tất cả -->
+                                    <div style="clear:both; text-align:center; margin-top: 30px;">
+                                        <a class="aa-browse-btn" href="@Url.Action("Index", "PShop", new { sortBy = "Date" })" style="width: auto; padding: 10px 30px;">
+                                            Xem tất cả sản phẩm mới <span class="fa fa-long-arrow-right"></span>
+                                        </a>
+                                    </div>
+                                </div>
+                                @if (ViewBag.DealProducts != null)
+                                {
+                                    foreach (var item in (IEnumerable<Product>)ViewBag.DealProducts)
+                                    {
+                                        Html.RenderPartial("_Product", item);
+                                    }
+                                }
+                                </ul>
+                                <a class="aa-browse-btn" href="@Url.Action("Index", "PShop", new { sortBy = "Price" })">Xem tất cả Deal <span class="fa fa-long-arrow-right"></span></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

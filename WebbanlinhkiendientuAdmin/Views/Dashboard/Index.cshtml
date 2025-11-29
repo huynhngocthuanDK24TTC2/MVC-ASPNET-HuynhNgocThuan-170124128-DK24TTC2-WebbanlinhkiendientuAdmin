@@ -1,0 +1,199 @@
+﻿@using WebbanlinhkiendientuAdmin.Models
+@model IEnumerable<Order>
+
+@{
+    ViewBag.Title = "Trang chủ quản trị";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- TIÊU ĐỀ TRANG -->
+<div class="row">
+    <div class="col-lg-12">
+        <h2 class="page-header" style="color: #d9534f; border-bottom: 2px solid #ddd; margin-top: 10px;">
+            <i class="fa fa-tachometer"></i> Tổng Quan Hệ Thống
+        </h2>
+    </div>
+</div>
+
+<!-- 4 Ô THỐNG KÊ  -->
+<div class="row">
+    <!-- Box 1: Đơn mới (Primary) -->
+    <div class="col-lg-3 col-md-6">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-xs-3">
+                        <i class="fa fa-shopping-cart fa-5x"></i>
+                    </div>
+                    <div class="col-xs-9 text-right">
+                        <div style="font-size: 40px;">@(ViewBag.NewOrders ?? 0)</div>
+                        <div>Đơn Hàng Mới</div>
+                    </div>
+                </div>
+            </div>
+            <a href="@Url.Action("Index", "Order")">
+                <div class="panel-footer">
+                    <span class="pull-left">Xem chi tiết</span>
+                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                    <div class="clearfix"></div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Box 2: Đang xử lý (Yellow/Warning) -->
+    <div class="col-lg-3 col-md-6">
+        <div class="panel panel-yellow" style="border-color: #f0ad4e;">
+            <div class="panel-heading" style="background-color: #f0ad4e; color: white;">
+                <div class="row">
+                    <div class="col-xs-3">
+                        <i class="fa fa-tasks fa-5x"></i>
+                    </div>
+                    <div class="col-xs-9 text-right">
+                        <div style="font-size: 40px;">@(ViewBag.DispatchedOrders ?? 0)</div>
+                        <div>Đang Xử Lý</div>
+                    </div>
+                </div>
+            </div>
+            <a href="#" style="color: #f0ad4e;">
+                <div class="panel-footer">
+                    <span class="pull-left">Chi tiết</span>
+                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                    <div class="clearfix"></div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Box 3: Đang giao (Info) -->
+    <div class="col-lg-3 col-md-6">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-xs-3">
+                        <i class="fa fa-truck fa-5x"></i>
+                    </div>
+                    <div class="col-xs-9 text-right">
+                        <div style="font-size: 40px;">@(ViewBag.ShippedOrders ?? 0)</div>
+                        <div>Đang Giao Hàng</div>
+                    </div>
+                </div>
+            </div>
+            <a href="#">
+                <div class="panel-footer">
+                    <span class="pull-left">Chi tiết</span>
+                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                    <div class="clearfix"></div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Box 4: Thành công (Success) -->
+    <div class="col-lg-3 col-md-6">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-xs-3">
+                        <i class="fa fa-check fa-5x"></i>
+                    </div>
+                    <div class="col-xs-9 text-right">
+                        <div style="font-size: 40px;">@(ViewBag.DeliveredOrders ?? 0)</div>
+                        <div>Thành Công</div>
+                    </div>
+                </div>
+            </div>
+            <a href="#">
+                <div class="panel-footer">
+                    <span class="pull-left">Chi tiết</span>
+                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                    <div class="clearfix"></div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- BẢNG ĐƠN HÀNG MỚI -->
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-clock-o"></i> Đơn hàng vừa nhận</h3>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead>
+                            <tr class="info">
+                                <th>Mã Đơn #</th>
+                                <th>Khách Hàng</th>
+                                <th>Ngày Đặt</th>
+                                <th>Tổng Tiền</th>
+                                <th class="text-center">Trạng Thái</th>
+                                <th class="text-center">Hành Động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Any())
+                            {
+                                foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td><strong>#@item.OrderID</strong></td>
+
+                                        <!-- Hiển thị đúng Họ + Tên theo Model Customer -->
+                                        <td>
+                                            @if (item.Customer != null)
+                                            {
+                                                // Hiển thị: Họ + Tên
+                                                <i class="fa fa-user"></i> <span>@item.Customer.First_Name @item.Customer.Last_Name</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Khách vãng lai</span>
+                                            }
+                                        </td>
+
+                                        <td>@(item.OrderDate.HasValue ? item.OrderDate.Value.ToString("dd/MM/yyyy HH:mm") : "")</td>
+
+                                        <td style="color:#d9534f; font-weight:bold;">
+                                            @String.Format("{0:N0} đ", item.TotalAmount)
+                                        </td>
+
+                                        <td class="text-center">
+                                            @if (item.Deliver == true)
+                                            {<span class="label label-success">Đã giao</span> }
+                                            else if (item.Shipped == true)
+                                            { <span class="label label-info">Đang giao</span> }
+                                            else if (item.Dispatched == true)
+                                            { <span class="label label-warning">Đang xử lý</span> }
+                                            else
+                                            { <span class="label label-danger">Mới nhận</span>}
+                                        </td>
+
+                                        <!-- Thêm nút xem chi tiết đơn hàng -->
+                                        <td class="text-center">
+                                            <a href="@Url.Action("Details", "Order", new { id = item.OrderID })" class="btn btn-default btn-xs" title="Xem chi tiết">
+                                                <i class="fa fa-eye"></i> Xem
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr><td colspan="6" class="text-center">Chưa có đơn hàng nào</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Link xem tất cả -->
+                <div class="text-right">
+                    <a href="@Url.Action("Index", "Order")">Xem tất cả đơn hàng <i class="fa fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

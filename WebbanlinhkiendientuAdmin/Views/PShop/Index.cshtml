@@ -1,0 +1,237 @@
+﻿@using PagedList.Mvc
+@model PagedList.IPagedList<WebbanlinhkiendientuAdmin.Models.Product>
+
+@{
+    ViewBag.Title = "Sản phẩm";
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+
+<style>
+    /* CSS Phân trang */
+    .pagination-container {
+        text-align: center;
+        margin-top: 30px;
+    }
+
+    .pagination {
+        display: inline-block;
+        padding-left: 0;
+        margin: 20px 0;
+        border-radius: 4px;
+    }
+
+        .pagination > li {
+            display: inline;
+        }
+
+            .pagination > li > a, .pagination > li > span {
+                position: relative;
+                float: left;
+                padding: 6px 12px;
+                margin-left: -1px;
+                line-height: 1.42857143;
+                color: #333;
+                text-decoration: none;
+                background-color: #fff;
+                border: 1px solid #ddd;
+            }
+
+        .pagination > .active > a {
+            z-index: 2;
+            color: #fff;
+            cursor: default;
+            background-color: #d31e1e;
+            border-color: #d31e1e;
+        }
+
+    /* CSS Nút Lọc */
+    .aa-filter-btn {
+        background-color: #d31e1e;
+        color: #fff;
+        border: none;
+        padding: 5px 15px;
+        margin-top: 15px;
+        font-weight: bold;
+        width: 100%;
+    }
+
+        .aa-filter-btn:hover {
+            background-color: #333;
+            color: #fff;
+        }
+</style>
+
+<!-- BANNER -->
+<section id="aa-catg-head-banner">
+    <img src="~/Images/banner/banner3.jpeg" alt="banner" style="width:100%; height:300px; object-fit:cover;">
+    <div class="aa-catg-head-banner-area">
+        <div class="container">
+            <div class="aa-catg-head-banner-content">
+                <h2>Cửa hàng</h2>
+                <ol class="breadcrumb">
+                    <li><a href="@Url.Action("Index", "Home")">Trang chủ</a></li>
+                    <li class="active">Sản phẩm</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="aa-product-category">
+    <div class="container">
+        <div class="row">
+
+            <!-- CỘT PHẢI: SẢN PHẨM (CHIẾM 9/12) -->
+            <!-- col-md-push-3: Đẩy sang phải để chừa chỗ cho Sidebar bên trái -->
+            <div class="col-lg-9 col-md-9 col-sm-8 col-md-push-3">
+                <div class="aa-product-catg-content">
+
+                    <!-- Thanh sắp xếp -->
+                    <div class="aa-product-catg-head">
+                        <div class="aa-product-catg-head-left">
+                            <form action="" class="aa-sort-form">
+                                <label for="">Sắp xếp theo</label>
+                                <select name="" onchange="location = this.value;">
+                                    <option value="@Url.Action("Index", new { sortBy = "Date" })" selected>Mới nhất</option>
+                                    <option value="@Url.Action("Index", new { sortBy = "Price" })">Giá tăng dần</option>
+                                    <option value="@Url.Action("Index", new { sortBy = "Name" })">Tên A-Z</option>
+                                </select>
+                            </form>
+                        </div>
+                        <div class="aa-product-catg-head-right">
+                            <a id="grid-catg" href="#"><span class="fa fa-th"></span></a>
+                            <a id="list-catg" href="#"><span class="fa fa-list"></span></a>
+                        </div>
+                    </div>
+
+                    <!-- Danh sách sản phẩm -->
+                    <div class="aa-product-catg-body">
+                        <ul class="aa-product-catg">
+                            @if (Model != null && Model.Any())
+                            {
+                                foreach (var item in Model)
+                                {
+                                    Html.RenderPartial("_Product", item);
+                                }
+                            }
+                            else
+                            {
+                                <div class="alert alert-warning text-center" style="margin-top: 20px;">
+                                    <i class="fa fa-search"></i> Không tìm thấy sản phẩm nào phù hợp.
+                                </div>
+                            }
+                        </ul>
+                    </div>
+
+                    <!-- Phân trang (Cập nhật để giữ filter) -->
+                    <div class="aa-product-catg-pagination">
+                        <nav>
+                            @Html.PagedListPager(Model, page => Url.Action("Index",
+                                new
+                                     {
+                                    page,
+                                    sortBy = Request.QueryString["sortBy"],
+                                    searchString = ViewBag.SearchString,
+                                    minPrice = ViewBag.MinPrice,
+                                    maxPrice = ViewBag.MaxPrice
+                                }))
+                        </nav>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CỘT TRÁI: SIDEBAR BỘ LỌC (CHIẾM 3/12) -->
+            <!-- col-md-pull-9: Kéo về bên trái -->
+            <div class="col-lg-3 col-md-3 col-sm-4 col-md-pull-9">
+                <aside class="aa-sidebar">
+
+                    <!-- 1. Widget Tìm kiếm -->
+                    <div class="aa-sidebar-widget">
+                        <h3>Tìm kiếm</h3>
+                        @using (Html.BeginForm("Index", "PShop", FormMethod.Get))
+                        {
+                            <div class="input-group">
+                                <input type="text" name="searchString" class="form-control" placeholder="Nhập tên sản phẩm..." value="@ViewBag.SearchString">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="submit" style="height:34px; background-color:#d31e1e; color:white; border-color:#d31e1e;"><i class="fa fa-search"></i></button>
+                                </span>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- 2. Widget Lọc Giá (THANH TRƯỢT) -->
+                    <div class="aa-sidebar-widget">
+                        <h3>Lọc theo giá</h3>
+                        <div class="aa-sidebar-price-range">
+                            <form action="@Url.Action("Index", "PShop")" method="get">
+                                <!-- Thanh trượt -->
+                                <div id="skipstep" class="noUi-target noUi-ltr noUi-horizontal noUi-background"></div>
+
+                                <!-- Hiển thị giá trị -->
+                                <span id="skip-value-lower" class="example-val">0</span>
+                                <span id="skip-value-upper" class="example-val">30.000.000</span>
+
+                                <!-- Input ẩn gửi dữ liệu -->
+                                <input type="hidden" name="minPrice" id="minPrice" value="@(ViewBag.MinPrice ?? 0)" />
+                                <input type="hidden" name="maxPrice" id="maxPrice" value="@(ViewBag.MaxPrice ?? 30000000)" />
+
+                                <button class="aa-filter-btn" type="submit">Áp dụng</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- 3. Widget Danh mục -->
+                    <div class="aa-sidebar-widget">
+                        <h3>Danh mục chính</h3>
+                        <ul class="aa-catg-nav">
+                            <li><a href="@Url.Action("GetProductsByCategory", "PShop", new { categoryName = "CPU" })">CPU - Vi xử lý</a></li>
+                            <li><a href="@Url.Action("GetProductsByCategory", "PShop", new { categoryName = "RAM" })">RAM - Bộ nhớ</a></li>
+                            <li><a href="@Url.Action("GetProductsByCategory", "PShop", new { categoryName = "VGA" })">VGA - Card màn hình</a></li>
+                            <li><a href="@Url.Action("GetProductsByCategory", "PShop", new { categoryName = "Mainboard" })">Mainboard - Bo mạch</a></li>
+                        </ul>
+                    </div>
+
+                </aside>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+@section scripts {
+    <!-- Script Thanh trượt giá (noUiSlider) -->
+    <script>
+        $(function () {
+            var skipSlider = document.getElementById('skipstep');
+            if (skipSlider) {
+                var minP = @(ViewBag.MinPrice ?? 0);
+                var maxP = @(ViewBag.MaxPrice ?? 30000000);
+
+                noUiSlider.create(skipSlider, {
+                    start: [minP, maxP],
+                    connect: true,
+                    step: 100000,
+                    range: {
+                        'min': 0,
+                        'max': 50000000
+                    }
+                });
+
+                var skipValues = [
+                    document.getElementById('skip-value-lower'),
+                    document.getElementById('skip-value-upper')
+                ];
+
+                var inputs = [
+                    document.getElementById('minPrice'),
+                    document.getElementById('maxPrice')
+                ];
+
+                skipSlider.noUiSlider.on('update', function (values, handle) {
+                    skipValues[handle].innerHTML = Math.round(values[handle]).toLocaleString() + " đ";
+                    inputs[handle].value = Math.round(values[handle]);
+                });
+            }
+        });
+    </script>
+}

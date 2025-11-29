@@ -1,0 +1,107 @@
+﻿@model WebbanlinhkiendientuAdmin.Models.admin_Employee
+@{
+    ViewBag.Title = "Xác nhận xóa nhân viên";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-12">
+        <!-- Cảnh báo -->
+        <div class="alert alert-warning mt-3" role="alert">
+            <h3 class="text-danger m-0">
+                <i class="fa-solid fa-triangle-exclamation"></i> CẢNH BÁO: Bạn có chắc chắn muốn xóa nhân viên này?
+            </h3>
+            <p class="mb-0 mt-2">Hành động này không thể hoàn tác.</p>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                @using (Html.BeginForm("Delete", "Employee", FormMethod.Post))
+                {
+                    @Html.HiddenFor(x => x.EmpID)
+                    @Html.AntiForgeryToken()
+
+                    <section class="section about-section gray-bg" id="about">
+                        <div class="container-fluid">
+                            <div class="row align-items-center flex-row-reverse">
+
+                                <!-- Cột thông tin -->
+                                <div class="col-lg-8">
+                                    <div class="about-text go-to">
+                                        <h3 class="text-primary">
+                                            @Model.FirstName @Model.LastName
+                                        </h3>
+                                        <hr />
+
+                                        <div class="row about-list">
+                                            <div class="col-md-6 mb-3">
+                                                <div class="media">
+                                                    <label class="fw-bold text-secondary">Ngày sinh</label>
+                                                    <p class="fw-bold text-dark">
+                                                        @(Model.DateofBirth.HasValue ? Model.DateofBirth.Value.ToString("dd/MM/yyyy") : "Chưa cập nhật")
+                                                    </p>
+                                                </div>
+                                                <div class="media">
+                                                    <label class="fw-bold text-secondary">Giới tính</label>
+                                                    <p class="fw-bold text-dark">
+                                                        @if (Model.Gender == "Male")
+                                                        {<span>Nam</span> }
+                                                        else if (Model.Gender == "Female")
+                                                        { <span>Nữ</span> }
+                                                        else
+                                                        { <span>@Model.Gender</span>}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6 mb-3">
+                                                <div class="media">
+                                                    <label class="fw-bold text-secondary">Email</label>
+                                                    <p>@Model.Email</p>
+                                                </div>
+                                                <div class="media">
+                                                    <label class="fw-bold text-secondary">Điện thoại</label>
+                                                    <p>@Model.Phone</p>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-12 mb-3">
+                                                <div class="media">
+                                                    <label class="fw-bold text-secondary">Địa chỉ</label>
+                                                    <p>@Model.Address</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Cột ảnh đại diện -->
+                                <div class="col-lg-4 text-center mb-3 mb-lg-0">
+                                    <div class="about-avatar">
+                                        <img src="@Url.Content(string.IsNullOrEmpty(Model.PicturePath) ? "~/Images/no-image.jpg" : Model.PicturePath)"
+                                             title="@Model.FirstName"
+                                             alt="Avatar"
+                                             class="img-thumbnail rounded-circle shadow"
+                                             style="width: 250px; height: 250px; object-fit: cover;">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Nút hành động -->
+                            <div class="row mt-4">
+                                <div class="col-12 d-flex gap-2">
+                                    <a href="@Url.Action("Index", "Employee")" class="btn btn-secondary btn-lg me-2">
+                                        <i class="fa-solid fa-arrow-left"></i> Quay lại danh sách
+                                    </a>
+                                    <button type="submit" class="btn btn-danger btn-lg">
+                                        <i class="fa-solid fa-trash"></i> Xác nhận xóa
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                }
+            </div>
+        </div>
+    </div>
+</div>

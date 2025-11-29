@@ -1,0 +1,186 @@
+﻿@{
+    ViewBag.Title = "Đăng nhập tài khoản";
+    // Sử dụng Layout1 (Giao diện Khách hàng)
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+
+<!-- CSS RIÊNG CHO TRANG ĐĂNG NHẬP (Đồng bộ style với Đăng ký) -->
+<style>
+    /* Khung chứa 2 cột */
+    .aa-myaccount-login, .aa-myaccount-register {
+        padding: 30px;
+        background: #fff;
+        border: 1px solid #e1e1e1;
+        border-radius: 4px;
+        min-height: 400px; /* Cân bằng chiều cao 2 bên */
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+        /* Tiêu đề */
+        .aa-myaccount-login h4, .aa-myaccount-register h4 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 15px;
+            color: #333;
+        }
+
+    /* Ô nhập liệu */
+    .form-control {
+        height: 45px;
+        border-radius: 0;
+        margin-bottom: 20px;
+        background-color: #fdfdfd;
+        border: 1px solid #ccc;
+    }
+
+        .form-control:focus {
+            border-color: #d31e1e;
+            box-shadow: none;
+            background-color: #fff;
+        }
+
+    /* Nút Đăng nhập (Màu Đỏ) */
+    .btn-login {
+        background-color: #d31e1e;
+        color: #fff;
+        width: 100%;
+        padding: 12px;
+        font-weight: bold;
+        text-transform: uppercase;
+        border: none;
+        transition: 0.3s;
+        border-radius: 3px;
+    }
+
+        .btn-login:hover {
+            background-color: #333;
+            color: #fff;
+        }
+
+    /* Nút Đăng ký (Màu Trắng viền Đen) */
+    .btn-register-link {
+        display: inline-block;
+        background-color: #fff;
+        color: #333;
+        border: 2px solid #333;
+        width: 100%;
+        padding: 12px;
+        font-weight: bold;
+        text-transform: uppercase;
+        text-align: center;
+        transition: 0.3s;
+        border-radius: 3px;
+        text-decoration: none;
+    }
+
+        .btn-register-link:hover {
+            background-color: #d31e1e;
+            border-color: #d31e1e;
+            color: #fff;
+            text-decoration: none;
+        }
+
+    /* Checkbox & Link quên mật khẩu */
+    
+</style>
+
+<!-- 1. BANNER TIÊU ĐỀ -->
+<section id="aa-catg-head-banner">
+    <div class="aa-catg-head-banner-area">
+        <div class="container">
+            <div class="aa-catg-head-banner-content">
+                <h2>Đăng Nhập</h2>
+                <ol class="breadcrumb">
+                    <li><a href="@Url.Action("Index", "Home")">Trang chủ</a></li>
+                    <li class="active">Tài khoản</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 2. FORM ĐĂNG NHẬP -->
+<section id="aa-myaccount">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="aa-myaccount-area" style="padding: 50px 0;">
+                    <div class="row">
+
+                        <!-- CỘT TRÁI: ĐĂNG NHẬP -->
+                        <div class="col-md-6">
+                            <div class="aa-myaccount-login">
+                                <h4><span class="fa fa-sign-in" style="color: #d31e1e;"></span> Đăng nhập</h4>
+
+                                @using (Html.BeginForm("Login", "Account", new { returnUrl = Request.QueryString["returnUrl"] }, FormMethod.Post, new { @class = "aa-login-form" }))
+                                {
+                                    @Html.AntiForgeryToken()
+
+                                    // Hiển thị thông báo lỗi (Màu đỏ)
+                                    if (ViewBag.Error != null)
+                                    {
+                                        <div class="alert alert-danger text-center">
+                                            <i class="fa fa-exclamation-triangle"></i> @ViewBag.Error
+                                        </div>
+                                    }
+
+                                    // Hiển thị thông báo thành công (Màu xanh - Từ trang đăng ký chuyển sang)
+                                    if (TempData["Success"] != null)
+                                    {
+                                        <div class="alert alert-success text-center">
+                                            <i class="fa fa-check-circle"></i> @TempData["Success"]
+                                        </div>
+                                    }
+
+                                    <label>Tên đăng nhập hoặc Email <span class="text-danger">*</span></label>
+                                    <input type="text" name="UserName" placeholder="Nhập tài khoản..." required autofocus class="form-control">
+
+                                    <label>Mật khẩu <span class="text-danger">*</span></label>
+                                    <input type="password" name="Password" placeholder="Nhập mật khẩu..." required class="form-control">
+
+                                    <button type="submit" class="btn-login">Đăng nhập ngay</button>
+
+                                    <div class="login-options">
+                                        <label class="rememberme" style="cursor: pointer;">
+                                            <input type="checkbox" name="RememberMe" value="true"> Ghi nhớ đăng nhập
+                                        </label>
+                                        <a href="#" class="forgot-pass">Quên mật khẩu?</a>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- CỘT PHẢI: LIÊN KẾT ĐĂNG KÝ -->
+                        <div class="col-md-6">
+                            <div class="aa-myaccount-register">
+                                <h4 class="text-success"><span class="fa fa-user-plus"></span> Khách hàng mới?</h4>
+
+                                <div style="padding: 10px 0 20px 0;">
+                                    <p style="line-height: 1.8; color: #555;">
+                                        Tạo tài khoản tại <strong>ShopHNT</strong> ngay hôm nay để nhận được các ưu đãi thành viên:
+                                    </p>
+                                    <ul style="list-style: none; padding-left: 5px; color: #555;">
+                                        <li style="margin-bottom: 8px;"><i class="fa fa-check text-success"></i> Mua hàng nhanh chóng và tiện lợi</li>
+                                        <li style="margin-bottom: 8px;"><i class="fa fa-check text-success"></i> Theo dõi trạng thái đơn hàng</li>
+                                        <li style="margin-bottom: 8px;"><i class="fa fa-check text-success"></i> Lưu lịch sử mua hàng</li>
+                                        <li style="margin-bottom: 8px;"><i class="fa fa-check text-success"></i> Nhận mã giảm giá riêng</li>
+                                    </ul>
+                                </div>
+
+                                <!-- Nút chuyển sang trang Đăng ký -->
+                                <a href="@Url.Action("RegisterCustomer", "Account")" class="btn-register-link">
+                                    Đăng ký tài khoản mới
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

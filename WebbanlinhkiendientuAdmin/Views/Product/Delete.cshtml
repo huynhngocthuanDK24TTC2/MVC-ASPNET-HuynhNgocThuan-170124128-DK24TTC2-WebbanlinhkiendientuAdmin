@@ -1,0 +1,131 @@
+﻿@model WebbanlinhkiendientuAdmin.Models.Product
+
+@{
+    ViewBag.Title = "Xóa sản phẩm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- 1. TIÊU ĐỀ -->
+<div class="row">
+    <div class="col-md-12">
+        <h2 class="page-header text-danger">
+            <i class="fa fa-trash-o"></i> Xác nhận xóa sản phẩm
+        </h2>
+    </div>
+</div>
+
+<!-- 2. KHU VỰC HIỂN THỊ LỖI (NẾU XÓA THẤT BẠI DO RÀNG BUỘC) -->
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="alert alert-danger alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <h4><i class="icon fa fa-ban"></i> Không thể xóa!</h4>
+                @TempData["ErrorMessage"]
+            </div>
+        </div>
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-8 col-md-offset-2">
+        <!-- 3. PANEL CẢNH BÁO (MÀU ĐỎ) -->
+        <div class="panel panel-danger">
+            <div class="panel-heading">
+                <h3 class="panel-title">Bạn có chắc chắn muốn xóa vĩnh viễn sản phẩm này?</h3>
+            </div>
+
+            <div class="panel-body">
+                <!-- Cảnh báo text -->
+                <div class="alert alert-warning">
+                    <i class="fa fa-exclamation-triangle"></i> <strong>Lưu ý:</strong>
+                    Hành động này không thể hoàn tác. Nếu sản phẩm đã từng phát sinh đơn hàng, hệ thống sẽ chặn xóa để bảo toàn dữ liệu.
+                </div>
+
+                <div class="row">
+                    <!-- Cột Trái: Ảnh sản phẩm -->
+                    <div class="col-md-4 text-center">
+                        <div class="thumbnail" style="border: none; box-shadow: none;">
+                            <img src="@Url.Content(string.IsNullOrEmpty(Model.PicturePath) ? "~/Images/no-image.jpg" : Model.PicturePath)"
+                                 alt="@Model.Name"
+                                 class="img-responsive img-rounded"
+                                 style="max-height: 200px; margin: 0 auto; border: 1px solid #ddd;">
+                            <br />
+                            <span class="label label-default">ID: @Model.ProductID</span>
+                        </div>
+                    </div>
+
+                    <!-- Cột Phải: Thông tin chi tiết -->
+                    <div class="col-md-8">
+                        <h3 class="text-primary" style="margin-top: 0; font-weight: bold;">@Model.Name</h3>
+                        <hr style="margin: 10px 0;" />
+
+                        <dl class="dl-horizontal" style="font-size: 14px;">
+                            <dt>Danh mục:</dt>
+                            <dd>
+                                @(Model.Category != null ? Model.Category.Name : "---")
+                                <i class="fa fa-angle-right"></i>
+                                @(Model.SubCategory != null ? Model.SubCategory.Name : "---")
+                            </dd>
+
+                            <br />
+
+                            <dt>Giá bán:</dt>
+                            <dd class="text-danger" style="font-weight:bold; font-size: 16px;">
+                                @string.Format("{0:N0} đ", Model.UnitPrice)
+                            </dd>
+
+                            <dt>Giá cũ:</dt>
+                            <dd>
+                                @if (Model.OldPrice.HasValue && Model.OldPrice > 0)
+                                {
+                                    <span style="text-decoration: line-through; color: #999;">
+                                        @string.Format("{0:N0} đ", Model.OldPrice)
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span>-</span>
+                                }
+                            </dd>
+
+                            <br />
+
+                            <dt>Tồn kho:</dt>
+                            <dd>
+                                @if (Model.UnitInStock > 0)
+                                {<strong>@Model.UnitInStock</strong> }
+                            else
+                            { <span class="text-danger">Hết hàng</span>}
+                            </dd>
+
+                            <dt>Nhà cung cấp:</dt>
+                            <dd>@(Model.Supplier != null ? Model.Supplier.CompanyName : "---")</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. CHÂN TRANG: NÚT BẤM -->
+            <div class="panel-footer text-right">
+                <!-- Form Submit về Action "Delete" method POST -->
+                @using (Html.BeginForm("Delete", "Product", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(x => x.ProductID)
+
+                    <!-- Nút Hủy -->
+                    <a href="@Url.Action("Index", "Product")" class="btn btn-default">
+                        <i class="fa fa-arrow-left"></i> Hủy bỏ, quay lại
+                    </a>
+
+                    <!-- Nút Xóa -->
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fa fa-trash"></i> Xóa vĩnh viễn
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+</div>

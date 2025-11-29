@@ -1,0 +1,81 @@
+﻿@using WebbanlinhkiendientuAdmin.Models
+@model List<OrderDetail>
+
+@{
+    // BẮT BUỘC: Ngắt Layout để không bị lặp vô hạn
+    Layout = null;
+
+    // Lấy tổng tiền và tổng số lượng từ Controller (PShop/GetCartBox)
+    decimal totalPrice = ViewBag.TotalPrice ?? 0;
+    int totalQty = ViewBag.TotalQuantity ?? 0;
+}
+
+<!-- 1. ICON GIỎ HÀNG (Hiển thị số lượng) -->
+<a class="aa-cart-link" href="@Url.Action("Index", "MyCart")">
+    <span class="fa fa-shopping-basket"></span>
+    <span class="aa-cart-title">GIỎ HÀNG</span>
+    <span class="aa-cart-notify">@totalQty</span>
+</a>
+
+<!-- 2. DANH SÁCH XỔ XUỐNG (Mini Cart) -->
+<div class="aa-cartbox-summary">
+    <ul>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                if (item.Product != null)
+                {
+                    <li>
+                        <!-- Ảnh sản phẩm -->
+                        <a class="aa-cartbox-img" href="@Url.Action("Details", "PShop", new { id = item.ProductID })">
+                            <img src="@Url.Content(string.IsNullOrEmpty(item.Product.PicturePath) ? "~/Images/no-image.jpg" : item.Product.PicturePath)"
+                                 alt="@item.Product.Name"
+                                 style="width: 50px; height: 50px; object-fit: cover; border: 1px solid #eee;">
+                        </a>
+
+                        <!-- Tên và Giá -->
+                        <div class="aa-cartbox-info">
+                            <h4>
+                                <a href="@Url.Action("Details", "PShop", new { id = item.ProductID })">
+                                    <!-- Cắt tên nếu quá dài để không vỡ khung -->
+                                    @(item.Product.Name.Length > 25 ? item.Product.Name.Substring(0, 22) + "..." : item.Product.Name)
+                                </a>
+                            </h4>
+                            <p>@item.Quantity x <span style="color: #d31e1e; font-weight: bold;">@String.Format("{0:N0} đ", item.UnitPrice)</span></p>
+                        </div>
+
+                        <!-- Nút Xóa (Trỏ về MyCart/Remove) -->
+                        <a class="aa-remove-product" href="@Url.Action("Remove", "MyCart", new { id = item.ProductID })" title="Xóa khỏi giỏ">
+                            <span class="fa fa-times"></span>
+                        </a>
+                    </li>
+                }
+            }
+
+            <!-- Tổng tiền -->
+            <li>
+                <span class="aa-cartbox-total-title">TỔNG CỘNG</span>
+                <span class="aa-cartbox-total-price" style="color: #d31e1e; font-size: 16px;">
+                    @String.Format("{0:N0} đ", totalPrice)
+                </span>
+            </li>
+        }
+        else
+        {
+            <!-- Trường hợp giỏ hàng trống -->
+            <li>
+                <div class="text-center" style="padding: 20px;">
+                    <i class="fa fa-shopping-bag" style="font-size: 30px; color: #ccc;"></i>
+                    <p class="text-muted" style="margin-top: 10px;">Giỏ hàng đang trống</p>
+                </div>
+            </li>
+        }
+    </ul>
+
+    <!-- Nút Thanh toán (Chỉ hiện khi có hàng) -->
+    @if (Model != null && Model.Count > 0)
+    {
+        <a class="aa-cartbox-checkout aa-primary-btn" href="@Url.Action("Index", "CheckOut")">Thanh toán</a>
+    }
+</div>

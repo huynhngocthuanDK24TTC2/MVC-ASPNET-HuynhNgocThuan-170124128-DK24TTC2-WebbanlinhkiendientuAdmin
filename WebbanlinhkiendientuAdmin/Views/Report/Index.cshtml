@@ -1,0 +1,169 @@
+﻿@{
+    ViewBag.Title = "Báo cáo doanh thu";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- CSS Tùy chỉnh cho Dashboard -->
+<style>
+    .report-box {
+        color: #fff;
+        padding: 20px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .report-box h3 {
+            margin: 0 0 10px 0;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .report-box p {
+            margin: 0;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .report-box .icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 60px;
+            opacity: 0.2;
+        }
+
+    .bg-primary {
+        background-color: #337ab7;
+    }
+
+    .bg-green {
+        background-color: #5cb85c;
+    }
+
+    .bg-yellow {
+        background-color: #f0ad4e;
+    }
+
+    .bg-red {
+        background-color: #d9534f;
+    }
+</style>
+
+<div class="row">
+    <div class="col-lg-12">
+        <h3 class="page-header" style="color: #5bc0de; border-bottom: 2px solid #ddd; margin-top: 20px;">
+            <i class="fa fa-bar-chart"></i> Báo Cáo Doanh Thu
+        </h3>
+    </div>
+</div>
+
+<!-- 1. BỘ LỌC NGÀY THÁNG -->
+<div class="row" style="margin-bottom: 20px;">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-body" style="background: #f9f9f9;">
+                @using (Html.BeginForm("Index", "Report", FormMethod.Get, new { @class = "form-inline" }))
+                {
+                    <div class="form-group">
+                        <label>Từ ngày:</label>
+                        <input type="date" name="fromDate" value="@(((DateTime)ViewBag.FromDate).ToString("yyyy-MM-dd"))" class="form-control" />
+                    </div>
+                    <div class="form-group" style="margin-left: 15px;">
+                        <label>Đến ngày:</label>
+                        <input type="date" name="toDate" value="@(((DateTime)ViewBag.ToDate).ToString("yyyy-MM-dd"))" class="form-control" />
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="margin-left: 15px;">
+                        <i class="fa fa-search"></i> Xem báo cáo
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 2. CÁC THẺ THỐNG KÊ (KPIs) -->
+<div class="row">
+    <div class="col-md-3">
+        <div class="report-box bg-green">
+            <div class="icon"><i class="fa fa-money"></i></div>
+            <h3>@String.Format("{0:N0} đ", ViewBag.TotalRevenue)</h3>
+            <p>DOANH THU THỰC TẾ</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="report-box bg-primary">
+            <div class="icon"><i class="fa fa-shopping-cart"></i></div>
+            <h3>@ViewBag.TotalOrders</h3>
+            <p>TỔNG ĐƠN HÀNG</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="report-box bg-yellow">
+            <div class="icon"><i class="fa fa-check-circle"></i></div>
+            <h3>@ViewBag.CompletedOrders</h3>
+            <p>ĐƠN THÀNH CÔNG</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="report-box bg-red">
+            <div class="icon"><i class="fa fa-times-circle"></i></div>
+            <h3>@ViewBag.CancelledOrders</h3>
+            <p>ĐƠN ĐÃ HỦY</p>
+        </div>
+    </div>
+</div>
+
+<!-- 3. BIỂU ĐỒ (CHART.JS) -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-line-chart"></i> Biểu đồ doanh thu theo ngày</h3>
+            </div>
+            <div class="panel-body">
+                <canvas id="revenueChart" style="width: 100%; height: 400px;"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <!-- Nhúng thư viện Chart.js từ CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // Lấy dữ liệu từ Controller
+        var labels = @Html.Raw(Json.Encode(ViewBag.Labels));
+        var data = @Html.Raw(Json.Encode(ViewBag.Values));
+
+        var ctx = document.getElementById('revenueChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar', // Loại biểu đồ: bar (cột), line (đường)
+            data: {
+                labels: labels, // Ngày tháng
+                datasets: [{
+                    label: 'Doanh thu (VNĐ)',
+                    data: data, // Số tiền
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value.toLocaleString('vi-VN') + ' đ';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+}

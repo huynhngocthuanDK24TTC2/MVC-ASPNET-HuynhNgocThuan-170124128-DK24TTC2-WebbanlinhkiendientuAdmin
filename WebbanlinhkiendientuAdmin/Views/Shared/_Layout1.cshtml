@@ -1,0 +1,700 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - ShopHNT Linh Kiện Điện Tử</title>
+
+    <!-- 1. CSS FILES -->
+    <link href="~/Content/MyContent/css/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/MyContent/css/font-awesome.css" rel="stylesheet" />
+    <link href="~/Content/MyContent/css/jquery.simpleLens.css" rel="stylesheet" />
+    <link href="~/Content/MyContent/css/jquery.smartmenus.bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/MyContent/css/nouislider.css" rel="stylesheet" />
+    <link href="~/Content/MyContent/css/sequence-theme.modern-slide-in.css" rel="stylesheet" />
+    <link href="~/Content/MyContent/css/slick.css" rel="stylesheet" />
+    <link href="~/Content/MyContent/css/style.css" rel="stylesheet" />
+    <link href="~/Content/MyContent/Intellisence/css/jquery-ui.min.css" rel="stylesheet" />
+
+    <!-- 2. JS FILES -->
+    <script src="~/Content/MyContent/js/jquery.min.js"></script>
+    <script src="~/Content/MyContent/Intellisence/js/jquery-ui.min.js"></script>
+
+    <!-- Script Autocomplete -->
+    <script type="text/javascript">
+        $(function () {
+            if ($.fn.autocomplete) {
+                $("#searchTxtBox").autocomplete({
+                    source: '@Url.Action("GetProducts", "PShop")',
+                    minLength: 1,
+                    select: function(event, ui) {
+                        $("#searchTxtBox").val(ui.item.value);
+                        $(this).closest("form").submit();
+                    }
+                });
+            }
+        });
+    </script>
+
+    <!-- 3. CSS TÙY CHỈNH (THEME SHOP HNT) -->
+    <style>
+        /* --- HEADER & MENU --- */
+        .aa-header-top-right .aa-head-top-nav-right li a {
+            color: #333;
+            border-right: 1px solid #ddd;
+            padding: 0 10px;
+            font-size: 13px;
+        }
+
+            .aa-header-top-right .aa-head-top-nav-right li a:hover {
+                color: #d31e1e;
+                text-decoration: none;
+            }
+
+        #menu {
+            background-color: #222 !important;
+            border-bottom: 3px solid #d31e1e;
+        }
+
+            #menu .navbar-nav > li > a {
+                color: #fff !important;
+                font-weight: bold;
+                font-size: 14px;
+                text-transform: uppercase;
+            }
+
+                #menu .navbar-nav > li > a:hover, #menu .navbar-nav > .active > a {
+                    background-color: #d31e1e !important;
+                    color: #fff !important;
+                }
+
+            #menu .dropdown-menu {
+                border-top: 3px solid #d31e1e;
+                min-width: 220px;
+                padding: 0;
+            }
+
+                #menu .dropdown-menu li a {
+                    padding: 10px 15px;
+                    border-bottom: 1px solid #eee;
+                    color: #333 !important;
+                }
+
+                    #menu .dropdown-menu li a:hover {
+                        background-color: #f4f4f4;
+                        color: #d31e1e !important;
+                        padding-left: 20px;
+                        transition: 0.3s;
+                    }
+
+        /* --- FOOTER --- */
+        #aa-footer .aa-footer-top {
+            background-color: #222 !important;
+            padding: 50px 0;
+            color: #ccc;
+        }
+
+        #aa-footer h3 {
+            color: #fff;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #d31e1e;
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        #aa-footer ul.aa-footer-nav li a {
+            color: #999;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+            #aa-footer ul.aa-footer-nav li a:hover {
+                color: #fff;
+                padding-left: 5px;
+            }
+
+        
+        /* Thông tin sinh viên 
+        .student-info {
+            margin-top: 15px;
+            padding-left: 0; /* Căn sát lề trái */
+        }
+
+            .student-info p {
+                margin-bottom: 8px;
+                font-size: 14px;
+                color: #fff !important;
+            }
+
+            .student-info i {
+                width: 20px;
+                color: #d31e1e !important;
+                text-align: center;
+            }
+
+            .student-info strong {
+                color: #d31e1e !important;
+                font-weight: bold;
+                font-size: 15px;
+            }
+
+            .student-info p {
+                margin-bottom: 8px;
+                font-size: 14px;
+                color: #fff !important;
+            }
+
+            .student-info i {
+                width: 20px;
+                color: #d31e1e !important;
+                text-align: center;
+            }
+            
+            .student-info strong {
+                color: #d31e1e !important;
+                font-weight: bold;
+                font-size: 15px;
+            }
+
+        /* --- GLOBAL ALERT --- */
+        #global-alert {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            top: auto;
+            z-index: 999999;
+            display: none;
+            min-width: 300px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            border-left: 5px solid #3c763d;
+            background-color: #dff0d8;
+            color: #3c763d;
+            padding: 15px;
+            border-radius: 4px;
+        }
+
+        /* --- NÚT TÌM KIẾM (MÀU ĐEN) --- */
+        .aa-search-box button {
+            background-color: #000000 !important;
+            color: #ffffff !important;
+            border: none !important;
+        }
+
+            .aa-search-box button:hover {
+                background-color: #d31e1e !important;
+                box-shadow: 0 0 5px rgba(0,0,0,0.5);
+            }
+
+        
+
+        ul.aa-product-catg {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px;
+            padding: 0;
+            width: 100%;
+        }
+
+        .product-wrapper {
+            padding: 0 10px;
+            margin-bottom: 20px;
+            list-style: none;
+        }
+
+        @@media (min-width: 992px) {
+            .product-wrapper {
+                width: 25%;
+            }
+        }
+
+        @@media (min-width: 768px) and (max-width: 991px) {
+            .product-wrapper {
+                width: 33.33%;
+            }
+        }
+
+        @@media (max-width: 767px) {
+            .product-wrapper {
+                width: 50%;
+            }
+        }
+
+        /* 1. KHUNG CARD CHÍNH */
+        .product-card {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            position: relative;
+            height: 490px; /* Chiều cao cố định */
+            transition: all 0.3s;
+            border-radius: 4px;
+            overflow: visible;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+        }
+
+            .product-card:hover {
+                border-color: #aaa;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                z-index: 10;
+                transform: translateY(-3px);
+            }
+
+        /* 2. ẢNH SẢN PHẨM */
+        .product-img-wrap {
+            height: 210px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid #f1f1f1;
+            background: #fff;
+        }
+
+            .product-img-wrap img {
+                max-width: 100%;
+                max-height: 100%;
+                object-fit: contain;
+                transition: 0.3s;
+            }
+
+        .product-card:hover .product-img-wrap img {
+            transform: scale(1.05);
+        }
+
+        /* 3. THANH TÁC VỤ (Z-INDEX CAO ĐỂ BẤM ĐƯỢC) */
+        .product-action-bar {
+            display: flex;
+            border-bottom: 1px solid #f1f1f1;
+            height: 40px;
+            background: #fdfdfd;
+            position: relative;
+            z-index: 30;
+        }
+
+            .product-action-bar a {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #555;
+                font-size: 16px;
+                border-right: 1px solid #f1f1f1;
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+                .product-action-bar a:last-child {
+                    border-right: none;
+                }
+
+                .product-action-bar a:hover {
+                    background-color: #d31e1e;
+                    color: #fff;
+                }
+
+        /* 4. THÔNG TIN */
+        .product-info {
+            padding: 10px;
+            text-align: center;
+            position: relative;
+            flex-grow: 1;
+            height: 180px;
+        }
+
+        .product-name {
+            font-size: 14px;
+            margin: 0 0 5px;
+            height: 38px;
+            overflow: hidden;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+            .product-name a {
+                color: #333;
+                text-decoration: none;
+                font-weight: 600;
+            }
+
+                .product-name a:hover {
+                    color: #288ad6;
+                }
+
+        .product-desc {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 5px;
+            height: 20px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        /* 5. KHU VỰC GIÁ */
+        .pro-price-box {
+            margin-top: 5px;
+            height: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .label-cheaper {
+            color: #d31e1e;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+
+        .pro-price-current {
+            color: #d31e1e !important;
+            font-size: 20px;
+            font-weight: bold;
+            line-height: 1.2;
+            display: block !important;
+        }
+
+        .price-old-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 2px;
+        }
+
+        .pro-price-old {
+            color: #999;
+            text-decoration: line-through;
+            font-size: 13px;
+        }
+
+        .discount-badge {
+            background-color: #288ad6;
+            color: #fff;
+            font-size: 11px;
+            padding: 1px 4px;
+            border-radius: 2px;
+        }
+
+        .pro-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #d31e1e;
+            color: #fff;
+            font-weight: bold;
+            font-size: 12px;
+            padding: 3px 8px;
+            border-radius: 3px;
+            z-index: 10;
+        }
+
+        .product-compare {
+            margin-top: 5px;
+        }
+
+            .product-compare a {
+                color: #288ad6;
+                font-size: 12px;
+            }
+
+        /* 6. TOOLTIP HỘP ĐEN (HEIGHT 200PX ĐỂ KHÔNG CHE NÚT) */
+        .product-hover-specs {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 200px; /* Cao vừa bằng ảnh */
+            background-color: rgba(20, 20, 20, 0.95);
+            color: #fff;
+            padding: 15px;
+            z-index: 20;
+            border-bottom: 2px solid #d31e1e;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            text-align: left;
+        }
+
+        .product-card:hover .product-hover-specs {
+            display: flex;
+            animation: fadeIn 0.2s ease-in;
+        }
+
+        .product-hover-specs h4 {
+            color: #ffcc00;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-bottom: 1px solid #555;
+            padding-bottom: 5px;
+            margin: 0 0 8px 0;
+            width: 100%;
+            text-align: left;
+        }
+
+        .product-hover-specs ul {
+            padding-left: 15px;
+            margin: 0;
+            width: 100%;
+        }
+
+        .product-hover-specs li {
+            font-size: 11px;
+            margin-bottom: 4px;
+            line-height: 1.3;
+            color: #eee;
+            list-style-type: disc;
+            list-style-position: outside;
+            text-align: left;
+            width: 100%;
+        }
+
+        .specs-btn-action {
+            display: none;
+        }
+
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a class="scrollToTop" href="#"><i class="fa fa-chevron-up"></i></a>
+
+    <!-- Global Alert -->
+    <div id="global-alert" class="alert alert-success alert-dismissible">
+        <button type="button" class="close" onclick="$('#global-alert').fadeOut()">&times;</button>
+        <i class="fa fa-check-circle fa-lg"></i> <span id="global-alert-msg" style="font-weight:bold; margin-left:5px;"></span>
+    </div>
+
+    <!-- HEADER -->
+    <header id="aa-header">
+        <div class="aa-header-top">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="aa-header-top-area">
+                            <div class="aa-header-top-left">
+                                <p><span class="fa fa-phone"></span> Hotline: <strong style="color:#d31e1e">0909.605.779</strong></p>
+                            </div>
+                            <div class="aa-header-top-right">
+                                <ul class="aa-head-top-nav-right">
+                                    @if (Session["UserID"] != null)
+                                    {
+                                        <li><a href="@Url.Action("Profile", "Account")"><i class="fa fa-user"></i> Chào, <strong>@(Session["username"] ?? "Khách")</strong></a></li>
+                                        <li><a href="@Url.Action("Index", "WishList")">Yêu thích <span class="badge" style="background-color:#d31e1e">@(ViewBag.WlItemsNo ?? 0)</span></a></li>
+                                        <li><a href="@Url.Action("Index", "MyCart")">Giỏ hàng <span class="badge" style="background-color:#d31e1e">@(ViewBag.NoOfItem ?? 0)</span></a></li>
+                                        <li><a href="@Url.Action("Index", "CheckOut")">Thanh toán</a></li>
+                                        <li><a href="@Url.Action("Logout", "Account")">Đăng xuất</a></li>
+                                    }
+                                    else
+                                    {
+                                        <li><a href="@Url.Action("Login", "Account", new { returnUrl = Request.Url.PathAndQuery })"><i class="fa fa-sign-in"></i> Đăng nhập</a></li>
+                                        <li><a href="@Url.Action("RegisterCustomer", "Account")"><i class="fa fa-user-plus"></i> Đăng ký</a></li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="aa-header-bottom">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="aa-header-bottom-area">
+                            <div class="aa-logo">
+                                <a href="@Url.Action("Index", "Home")">
+                                    <span class="fa fa-microchip" style="color: #d31e1e;"></span>
+                                    <p>Shop<strong>HNT</strong> <span style="color: #888; font-size:14px;">Linh Kiện Điện Tử</span></p>
+                                </a>
+                            </div>
+                            <div class="aa-cartbox">
+                                @Html.Action("GetCartBox", "PShop")
+                            </div>
+                            <div class="aa-search-box">
+                                <form action="@Url.Action("Search", "PShop")" method="get">
+                                    <input type="text" name="product" id="searchTxtBox" placeholder="Bạn cần tìm linh kiện gì? (CPU, RAM...)">
+                                    <button type="submit"><span class="fa fa-search"></span></button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MENU -->
+    <section id="menu">
+        <div class="container">
+            <div class="menu-area">
+                <div class="navbar navbar-default" role="navigation">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                            <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+                        </button>
+                    </div>
+                    <div class="navbar-collapse collapse">
+                        <ul class="nav navbar-nav">
+                            <li><a href="@Url.Action("Index", "Home")">Trang chủ</a></li>
+                            @{
+                                using (var db = new WebbanlinhkiendientuAdmin.Models.WebbanlinhkiendientuAdminDbModels())
+                                {
+                                    var categories = db.Categories.Where(c => c.isActive == true).ToList();
+                                    foreach (var cat in categories)
+                                    {
+                                        var subCats = db.SubCategories.Where(s => s.CategoryID == cat.CategoryID && s.isActive == true).ToList();
+                                        if (subCats.Any())
+                                        {
+                                            <li class="dropdown">
+                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">@cat.Name <span class="caret"></span></a>
+                                                <ul class="dropdown-menu" role="menu">
+                                                    <li><a href="@Url.Action("GetProductsByCategory", "PShop", new { categoryName = cat.Name })"><strong>Tất cả @cat.Name</strong></a></li>
+                                                    <li class="divider"></li>
+                                                    @foreach (var sub in subCats)
+                                                    {
+                                                        <li><a href="@Url.Action("GetProductsByCategory", "PShop", new { categoryName = sub.Name })">@sub.Name</a></li>
+                                                    }
+                                                </ul>
+                                            </li>
+                                        }
+                                        else
+                                        {
+                                            <li><a href="@Url.Action("GetProductsByCategory", "PShop", new { categoryName = cat.Name })">@cat.Name</a></li>
+                                        }
+                                    }
+                                }
+                            }
+                            <li><a href="@Url.Action("Index", "Contact")">Liên hệ</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BODY -->
+    @RenderBody()
+
+    <!-- FOOTER -->
+    <footer id="aa-footer">
+        <div class="aa-footer-top">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3 col-sm-6">
+                        <div class="aa-footer-widget">
+                            <h3>Về Shop HNT</h3>
+                            <ul class="aa-footer-nav">
+                                <li><a href="#">Giới thiệu chung</a></li>
+                                <li><a href="#">Chính sách bảo mật</a></li>
+                                <li><a href="#">Điều khoản sử dụng</a></li>
+                                <li><a href="@Url.Action("Login", "admin_Login")" target="_blank" style="color:#d31e1e"><i class="fa fa-lock"></i> Kênh Quản trị</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="aa-footer-widget">
+                            <h3>Hỗ trợ khách hàng</h3>
+                            <ul class="aa-footer-nav">
+                                <li><a href="#">Hướng dẫn mua hàng</a></li>
+                                <li><a href="#">Phương thức thanh toán</a></li>
+                                <li><a href="#">Chính sách đổi trả</a></li>
+                                <li><a href="#">Tra cứu bảo hành</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="aa-footer-widget">
+                            <h3>Liên hệ</h3>
+                            <address>
+                                <p><i class="fa fa-map-marker"></i> 29 Nguyễn Trọng Tấn, Q.Tân Phú, TP.HCM</p>
+                                <p><i class="fa fa-phone"></i> 0909.605.779</p>
+                                <p><i class="fa fa-envelope"></i> <a href="mailto:hotro@shophnt.com">hotro@shophnt.com</a></p>
+                            </address>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="aa-footer-widget">
+                            <h3>Thông tin Sinh viên</h3>
+                            <div class="student-info">
+                                <p><i class="fa fa-university"></i> Trường Đại học Trà Vinh</p>
+                                <p><i class="fa fa-users"></i> Lớp: <strong>DK24TTC2</strong></p>
+                                <p><i class="fa fa-user"></i> SV: <strong>Huỳnh Ngọc Thuận</strong></p>
+                                <p><i class="fa fa-book"></i> Đề tài: Web Bán Linh Kiện Điện Tử</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="aa-footer-bottom">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="aa-footer-bottom-area">
+                            <p>&copy; @DateTime.Now.Year <strong style="color: #d31e1e;">Huỳnh Ngọc Thuận - Lớp: DK24TTC2 - Đề tài: Web Bán Linh Kiện Điện Tử </strong></p>
+                            <div class="aa-footer-payment">
+                                <span class="fa fa-cc-mastercard"></span>
+                                <span class="fa fa-cc-visa"></span>
+                                <span class="fa fa-paypal"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="~/Content/MyContent/js/bootstrap.js"></script>
+    <script src="~/Content/MyContent/js/jquery.smartmenus.js"></script>
+    <script src="~/Content/MyContent/js/jquery.smartmenus.bootstrap.js"></script>
+    <script src="~/Content/MyContent/js/sequence.js"></script>
+    <script src="~/Content/MyContent/js/sequence-theme.modern-slide-in.js"></script>
+    <script src="~/Content/MyContent/js/jquery.simpleGallery.js"></script>
+    <script src="~/Content/MyContent/js/jquery.simpleLens.js"></script>
+    <script src="~/Content/MyContent/js/slick.js"></script>
+    <script src="~/Content/MyContent/js/nouislider.js"></script>
+    <script src="~/Content/MyContent/js/custom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
+
+    <!-- Script hiển thị thông báo -->
+    <script>
+        $(document).ready(function () {
+            var successMsg = '@Html.Raw(TempData["Success"])';
+            var errorMsg = '@Html.Raw(TempData["Error"])';
+
+            if (successMsg && successMsg.length > 0) {
+                $("#global-alert-msg").html(successMsg);
+                $("#global-alert").removeClass("alert-danger").addClass("alert-success").fadeIn();
+                setTimeout(function () { $("#global-alert").fadeOut(); }, 4000);
+            }
+            if (errorMsg && errorMsg.length > 0) {
+                $("#global-alert-msg").html(errorMsg);
+                $("#global-alert").removeClass("alert-success").addClass("alert-danger").fadeIn();
+                setTimeout(function () { $("#global-alert").fadeOut(); }, 5000);
+            }
+        });
+    </script>
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

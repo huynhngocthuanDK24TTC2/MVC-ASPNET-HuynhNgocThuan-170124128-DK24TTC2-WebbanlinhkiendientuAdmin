@@ -1,0 +1,168 @@
+﻿@using PagedList.Mvc
+@model PagedList.IPagedList<WebbanlinhkiendientuAdmin.Models.Supplier>
+
+@{
+    ViewBag.Title = "Danh sách Nhà cung cấp";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- CSS PHÂN TRANG  -->
+<style>
+    .pagination {
+        margin: 0;
+    }
+
+        .pagination > .active > a {
+            background-color: #5bc0de;
+            border-color: #5bc0de;
+        }
+
+    .search-form .form-control {
+        display: inline-block;
+        width: auto;
+        vertical-align: middle;
+    }
+</style>
+
+<!-- TIÊU ĐỀ TRANG -->
+<div class="row">
+    <div class="col-lg-12">
+        <h3 class="page-header" style="color: #5bc0de; border-bottom: 2px solid #ddd; margin-top: 20px;">
+            <i class="fa fa-truck"></i> Quản Lý Nhà Cung Cấp
+        </h3>
+    </div>
+</div>
+
+<!-- THÔNG BÁO -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <i class="fa fa-check-circle"></i> @TempData["SuccessMessage"]
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <i class="fa fa-exclamation-triangle"></i> @TempData["ErrorMessage"]
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <!-- PANEL  -->
+        <div class="panel panel-default">
+
+            <div class="panel-heading" style="height: 55px;">
+                <div class="row">
+                    <!-- Nút thêm mới (Trái) -->
+                    <div class="col-md-4">
+                        <a href="@Url.Action("Create", "Supplier")" class="btn btn-success">
+                            <i class="fa fa-plus"></i> Thêm mới
+                        </a>
+                    </div>
+
+                    <!-- Form tìm kiếm (Phải) -->
+                    <div class="col-md-8 text-right">
+                        @using (Html.BeginForm("Index", "Supplier", FormMethod.Get, new { @class = "form-inline search-form" }))
+                        {
+                            <div class="form-group">
+                                <input type="text" name="searchString" value="@ViewBag.CurrentFilter" class="form-control" placeholder="Tìm tên hoặc SĐT..." />
+                            </div>
+                            <button type="submit" class="btn btn-info">
+                                <i class="fa fa-search"></i> Tìm kiếm
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped table-bordered">
+                        <thead>
+                            <tr class="info">
+                                <th>Tên công ty</th>
+                                <th>Người liên hệ</th>
+                                <th>Thông tin liên lạc</th>
+                                <th class="text-center">Trạng thái</th>
+                                <th class="text-center" style="width: 150px;">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Any())
+                            {
+                                foreach (var sup in Model)
+                                {
+                                    <tr>
+                                        <td style="font-weight: bold; color: #333;">
+                                            @Html.DisplayFor(s => sup.CompanyName)
+                                        </td>
+
+                                        <td>
+                                            <i class="fa fa-user"></i> @(string.IsNullOrEmpty(sup.ContactName) ? "---" : sup.ContactName)
+                                        </td>
+
+                                        <td>
+                                            <small>
+                                                <i class="fa fa-phone"></i> @(sup.Phone ?? "N/A")<br />
+                                                <i class="fa fa-envelope-o"></i> @(sup.Email ?? "N/A")
+                                            </small>
+                                        </td>
+
+                                        <td class="text-center">
+                                            @if (sup.isActive == true)
+                                            {
+                                                <span class="label label-success">Đang hoạt động</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="label label-default">Ngừng hợp tác</span>
+                                            }
+                                        </td>
+
+                                        <td class="text-center">
+                                            <!-- Nút Sửa -->
+                                            <a href="@Url.Action("Edit", "Supplier", new { id = sup.SupplierID })" class="btn btn-warning btn-xs" title="Sửa">
+                                                <i class="fa fa-pencil"></i>
+                                            </a>
+
+                                            <!-- Nút Chi tiết -->
+                                            <a href="@Url.Action("Details", "Supplier", new { id = sup.SupplierID })" class="btn btn-info btn-xs" title="Chi tiết">
+                                                <i class="fa fa-info-circle"></i>
+                                            </a>
+
+                                            <!-- Nút Xóa (Dẫn sang trang Delete có cảnh báo) -->
+                                            <a href="@Url.Action("Delete", "Supplier", new { id = sup.SupplierID })" class="btn btn-danger btn-xs" title="Xóa/Ngưng hợp tác">
+                                                <i class="fa fa-trash-o"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted" style="padding: 20px;">
+                                        Không tìm thấy nhà cung cấp nào.
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- THANH PHÂN TRANG -->
+                <div class="row">
+                    <div class="col-md-6" style="margin-top: 20px;">
+                        Trang @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) / @Model.PageCount
+                    </div>
+                    <div class="col-md-6 text-right">
+                        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchString = ViewBag.CurrentFilter }))
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

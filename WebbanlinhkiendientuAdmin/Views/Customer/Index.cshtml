@@ -1,0 +1,157 @@
+﻿@model IEnumerable<WebbanlinhkiendientuAdmin.Models.Customer>
+
+@{
+    ViewBag.Title = "Danh sách khách hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- TIÊU ĐỀ TRANG -->
+<div class="row">
+    <div class="col-lg-12">
+        <h3 class="page-header" style="color: #5bc0de; border-bottom: 2px solid #ddd; margin-top: 20px;">
+            <i class="fa fa-users"></i> Quản Lý Khách Hàng
+        </h3>
+    </div>
+</div>
+
+<!-- THÔNG BÁO (ALERT) -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <i class="fa fa-check-circle"></i> @TempData["SuccessMessage"]
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <i class="fa fa-exclamation-triangle"></i> @TempData["ErrorMessage"]
+    </div>
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <!-- KHUNG BẢNG  -->
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h3 class="panel-title" style="line-height: 34px;">
+                            <i class="fa fa-list"></i> Danh sách tài khoản
+                        </h3>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <!-- Nút Thêm Mới  -->
+                        <a href="@Url.Action("Create", "Customer")" class="btn btn-primary">
+                            <i class="fa fa-plus"></i> Thêm khách hàng mới
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped table-bordered">
+                        <thead>
+                            <tr class="info">
+                                <!-- Màu nền tiêu đề bảng -->
+                                <th style="width: 60px;" class="text-center">Ảnh</th>
+                                <th>Họ và Tên</th>
+                                <th>Giới tính</th>
+                                <th>Email / SĐT</th>
+                                <th>Địa chỉ</th>
+                                <th class="text-center">Trạng thái</th>
+                                <th class="text-center" style="width: 150px;">Tác vụ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Any())
+                            {
+                                foreach (var cus in Model)
+                                {
+                                    <tr>
+                                        <!-- 1. Cột Ảnh -->
+                                        <td class="text-center" style="vertical-align: middle;">
+                                            <img src="@Url.Content(string.IsNullOrEmpty(cus.PicturePath) ? "~/Images/UserAvatar/no-image.jpg" : cus.PicturePath)"
+                                                 alt="Avatar"
+                                                 class="img-circle"
+                                                 width="40" height="40"
+                                                 style="object-fit:cover; border: 1px solid #ddd;" />
+                                        </td>
+
+                                        <!-- 2. Cột Họ Tên -->
+                                        <td style="vertical-align: middle;">
+                                            <strong>@Html.DisplayFor(c => cus.First_Name) @Html.DisplayFor(c => cus.Last_Name)</strong>
+                                            <br />
+                                            <small class="text-muted">ID: #@cus.CustomerID</small>
+                                        </td>
+
+                                        <!-- 3. Cột Giới Tính -->
+                                        <td style="vertical-align: middle;">
+                                            @if (cus.Gender == "Male" || cus.Gender == "Nam")
+                                            {<span><i class="fa fa-mars text-info"></i> Nam</span> }
+                                            else if (cus.Gender == "Female" || cus.Gender == "Nữ")
+                                            { <span><i class="fa fa-venus text-danger"></i> Nữ</span> }
+                                            else
+                                            { <span>@cus.Gender</span>}
+                                        </td>
+
+                                        <!-- 4. Cột Liên Hệ -->
+                                        <td style="vertical-align: middle;">
+                                            <div style="font-size: 13px;">
+                                                <i class="fa fa-envelope-o"></i> @Html.DisplayFor(c => cus.Email)<br />
+                                                <i class="fa fa-phone"></i> @Html.DisplayFor(c => cus.Phone)
+                                            </div>
+                                        </td>
+
+                                        <!-- 5. Cột Địa Chỉ -->
+                                        <td style="vertical-align: middle;">
+                                            @(string.IsNullOrEmpty(cus.City) ? "Chưa cập nhật" : cus.City), @cus.Country
+                                        </td>
+
+                                        <!-- 6. Cột Trạng Thái -->
+                                        <td class="text-center" style="vertical-align: middle;">
+                                            @if (cus.status == true)
+                                            {
+                                                <span class="label label-success">Hoạt động</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="label label-default">Đã khóa</span>
+                                            }
+                                        </td>
+
+                                        <!-- 7. Cột Tác Vụ -->
+                                        <td class="text-center" style="vertical-align: middle;">
+                                            <a href="@Url.Action("Edit", "Customer", new {id = cus.CustomerID })" class="btn btn-warning btn-xs" title="Sửa">
+                                                <i class="fa fa-pencil"></i>
+                                            </a>
+                                            <a href="@Url.Action("Details", "Customer", new {id = cus.CustomerID })" class="btn btn-info btn-xs" title="Chi tiết">
+                                                <i class="fa fa-info-circle"></i>
+                                            </a>
+                                            <!-- Nút Xóa có xác nhận Javascript -->
+                                            <a href="@Url.Action("Delete", "Customer", new {id = cus.CustomerID })" class="btn btn-danger btn-xs" title="Xóa">
+                                                <i class="fa fa-trash-o"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted" style="padding: 20px;">
+                                        <i class="fa fa-inbox fa-3x"></i><br />
+                                        Chưa có dữ liệu khách hàng nào.
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Kết thúc Panel Body -->
+        </div>
+    </div>
+</div>

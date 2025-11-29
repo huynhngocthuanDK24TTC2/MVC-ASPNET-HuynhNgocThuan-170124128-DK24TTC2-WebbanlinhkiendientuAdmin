@@ -1,0 +1,109 @@
+﻿@model WebbanlinhkiendientuAdmin.Models.Supplier
+
+@{
+    ViewBag.Title = "Xóa nhà cung cấp";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- TIÊU ĐỀ TRANG -->
+<div class="row">
+    <div class="col-lg-12">
+        <h3 class="page-header" style="color: #d9534f; border-bottom: 2px solid #ddd; margin-top: 20px;">
+            <i class="fa fa-exclamation-triangle"></i> Xóa Nhà Cung Cấp
+        </h3>
+    </div>
+</div>
+
+<!-- HIỂN THỊ THÔNG BÁO LỖI (NẾU XÓA THẤT BẠI) -->
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <strong><i class="fa fa-times-circle"></i> Lỗi:</strong> @TempData["ErrorMessage"]
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <!-- PANEL DANGER (MÀU ĐỎ) -->
+        <div class="panel panel-danger">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-trash-o"></i> Bạn có chắc chắn muốn xóa nhà cung cấp này không?</h3>
+            </div>
+
+            <div class="panel-body">
+                <!-- Cảnh báo -->
+                <div class="alert alert-warning">
+                    <i class="fa fa-warning"></i> <strong>Lưu ý quan trọng:</strong>
+                    Nếu nhà cung cấp này đang có sản phẩm trong hệ thống, bạn sẽ không thể xóa. Vui lòng chọn <strong>"Sửa"</strong> và bỏ kích hoạt trạng thái thay vì xóa.
+                </div>
+
+                <div class="row">
+                    <!-- CỘT TRÁI: LOGO ĐẠI DIỆN -->
+                    <div class="col-md-3 text-center">
+                        <img src="@Url.Content("~/Images/UserAvatar/no-image.jpg")"
+                             alt="Logo"
+                             class="img-thumbnail"
+                             style="width: 150px; height: 150px; object-fit: contain; margin-bottom: 15px;" />
+
+                        <h4 class="text-danger" style="font-weight: bold;">@Model.CompanyName</h4>
+                        <p class="text-muted">ID: #@Model.SupplierID</p>
+                    </div>
+
+                    <!-- CỘT PHẢI: THÔNG TIN CHI TIẾT -->
+                    <div class="col-md-9">
+                        <table class="table table-bordered table-striped">
+                            <tbody>
+                                <tr>
+                                    <th style="width: 150px;">Người liên hệ:</th>
+                                    <td>@(string.IsNullOrEmpty(Model.ContactName) ? "---" : Model.ContactName)</td>
+                                </tr>
+                                <tr>
+                                    <th>Số điện thoại:</th>
+                                    <td>@Model.Phone</td>
+                                </tr>
+                                <tr>
+                                    <th>Email:</th>
+                                    <td>@Model.Email</td>
+                                </tr>
+                                <tr>
+                                    <th>Địa chỉ:</th>
+                                    <td>@Model.Address</td>
+                                </tr>
+                                <tr>
+                                    <th>Trạng thái:</th>
+                                    <td>
+                                        @if (Model.isActive == true)
+                                        {<span class="label label-success">Đang hợp tác</span> }
+                                        else
+                                        { <span class="label label-default">Ngừng hợp tác</span>}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHÂN PANEL: NÚT XÁC NHẬN -->
+            <div class="panel-footer text-right">
+                @using (Html.BeginForm("Delete", "Supplier", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <!-- Truyền ID để Controller biết xóa ai -->
+                    @Html.HiddenFor(x => x.SupplierID)
+
+                    <!-- Nút Hủy -->
+                    <a href="@Url.Action("Index", "Supplier")" class="btn btn-default">
+                        <i class="fa fa-arrow-left"></i> Hủy bỏ, quay lại
+                    </a>
+
+                    <!-- Nút Xóa (Submit) -->
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fa fa-trash"></i> Xác nhận xóa vĩnh viễn
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+</div>
